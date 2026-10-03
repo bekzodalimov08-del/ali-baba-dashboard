@@ -566,12 +566,6 @@ tr.today td{background:rgba(240,165,0,.04)}
     <button class="hbtn" onclick="goLanding()">← Выход</button>
   </div>
   <div class="wrap">
-    <div class="tabs">
-      <button class="tab on" onclick="mktTab('clients',this)">👥 Клиенты</button>
-      <button class="tab" onclick="mktTab('orders',this)">🌐 Заказ напрямую через веб Ali Baba</button>
-      <button class="tab" onclick="goCalls()">📞 Обзвон</button>
-      <button class="tab" onclick="goJournal()">📒 Журнал продаж</button>
-    </div>
     <!-- CLIENTS -->
     <div id="mkt-clients">
       <!-- CRM:START Клиенты (CRM продажника). Заказчик: CEO 03.10.2026. Код: tech. -->
@@ -619,47 +613,33 @@ tr.today td{background:rgba(240,165,0,.04)}
       .crm-quick{background:var(--bg2,#f6f6f6);border-radius:12px;padding:10px;margin-top:8px}
       </style>
       <div class="crm-top">
-        <div class="crm-op">👤 <span style="color:var(--t2)">Кто работает:</span><input id="crm-op" list="crm-ops" placeholder="имя" onchange="crmSetOp(this.value)"><datalist id="crm-ops"></datalist></div>
-        <div class="crm-date"><button onclick="crmShift(-1)">◀</button><input type="date" id="crm-date" onchange="crmSetDate(this.value)"><button onclick="crmShift(1)">▶</button><button onclick="crmSetDate(crmToday())">Сегодня</button></div>
+        <div class="crm-op">👤 <span style="color:var(--t2)" data-i18n="whoWorks">Кто работает:</span><input id="crm-op" list="crm-ops" data-i18n-ph="name" placeholder="имя" onchange="crmSetOp(this.value)"><datalist id="crm-ops"></datalist></div>
+        <button class="crm-chip" id="crm-lang-btn" style="margin-left:auto" onclick="crmToggleLang()">UZ</button>
+        <div class="crm-date"><button onclick="crmShift(-1)">◀</button><input type="date" id="crm-date" onchange="crmSetDate(this.value)"><button onclick="crmShift(1)">▶</button><button onclick="crmSetDate(crmToday())" data-i18n="today">Сегодня</button></div>
       </div>
       <div class="crm-kpi" id="crm-kpi"></div>
       <div class="crm-f" id="crm-ftype">
-        <button class="crm-chip on" onclick="crmFilter('type','all',this)">Все</button>
-        <button class="crm-chip" onclick="crmFilter('type','corporate',this)">🏢 Корп</button>
-        <button class="crm-chip" onclick="crmFilter('type','individual',this)">👤 Частные</button>
-        <button class="crm-chip" onclick="crmFilter('type','due',this)">🔔 К перезвону</button>
-        <button class="crm-chip" onclick="crmFilter('type','mine',this)">🙋 Мои</button>
+        <button class="crm-chip on" onclick="crmFilter('type','all',this)" data-i18n="all">Все</button>
+        <button class="crm-chip" onclick="crmFilter('type','corporate',this)">🏢 <span data-i18n="corporate">Корп</span></button>
+        <button class="crm-chip" onclick="crmFilter('type','individual',this)">👤 <span data-i18n="individual">Частные</span></button>
+        <button class="crm-chip" onclick="crmFilter('type','due',this)">🔔 <span data-i18n="toCallback">К перезвону</span></button>
+        <button class="crm-chip" onclick="crmFilter('type','mine',this)">🙋 <span data-i18n="mine">Мои</span></button>
       </div>
       <div class="crm-f" id="crm-fstat">
-        <button class="crm-chip on" onclick="crmFilter('status','all',this)">Все статусы</button>
-        <button class="crm-chip" onclick="crmFilter('status','new',this)">🆕 Новые</button>
-        <button class="crm-chip" onclick="crmFilter('status','called',this)">📞 Позвонили</button>
-        <button class="crm-chip" onclick="crmFilter('status','interested',this)">👍 Заинтересованы</button>
-        <button class="crm-chip" onclick="crmFilter('status','trial',this)">🧪 Пробный</button>
-        <button class="crm-chip" onclick="crmFilter('status','client',this)">✅ Клиенты</button>
-        <button class="crm-chip" onclick="crmFilter('status','lost',this)">❌ Потеряны</button>
+        <button class="crm-chip on" onclick="crmFilter('status','all',this)" data-i18n="allStatuses">Все статусы</button>
+        <button class="crm-chip" onclick="crmFilter('status','new',this)">🆕 <span data-i18n="st_new">Новые</span></button>
+        <button class="crm-chip" onclick="crmFilter('status','called',this)">📞 <span data-i18n="st_called">Позвонили</span></button>
+        <button class="crm-chip" onclick="crmFilter('status','interested',this)">👍 <span data-i18n="st_interested">Заинтересованы</span></button>
+        <button class="crm-chip" onclick="crmFilter('status','trial',this)">🧪 <span data-i18n="st_trial">Пробный</span></button>
+        <button class="crm-chip" onclick="crmFilter('status','client',this)">✅ <span data-i18n="st_client">Клиенты</span></button>
+        <button class="crm-chip" onclick="crmFilter('status','lost',this)">❌ <span data-i18n="st_lost">Потеряны</span></button>
       </div>
-      <input class="crm-search" id="crm-q" placeholder="🔍 имя, компания, телефон" oninput="crmRender()">
-      <button class="crm-add" onclick="crmEdit(null)">＋ Новый клиент</button>
+      <input class="crm-search" id="crm-q" data-i18n-ph="search" placeholder="🔍 имя, компания, телефон" oninput="crmRender()">
+      <button class="crm-add" onclick="crmEdit(null)">＋ <span data-i18n="newClient">Новый клиент</span></button>
       <div id="crm-list"></div>
       <div class="crm-modal" id="crm-modal" onclick="if(event.target===this)crmClose()"><div class="crm-sheet" id="crm-sheet"></div></div>
       <!-- CRM:END -->
 
-    </div>
-    <!-- ORDER CUSTOMERS — клиенты из заказов витрины (авто из mkt_leads) -->
-    <div id="mkt-orders" style="display:none">
-      <div style="font-size:15px;font-weight:800;margin-bottom:4px">База клиентов из заказов</div>
-      <div style="color:var(--t2);font-size:12px;margin-bottom:12px">Клиенты попадают сюда автоматически после первого заказа с витрины (имя + телефон). Дедуп по телефону, статус растёт с числом заказов.</div>
-      <div class="kpi-row" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px">
-        <div class="kpi cnt"><div class="kpi-lbl">Всего клиентов</div><div class="kpi-val" id="oc-total">0</div></div>
-        <div class="kpi rev"><div class="kpi-lbl">Новые</div><div class="kpi-val" id="oc-new">0</div></div>
-        <div class="kpi gross"><div class="kpi-lbl">Повторные</div><div class="kpi-val" id="oc-rep">0</div></div>
-        <div class="kpi exp"><div class="kpi-lbl">Постоянные (5+)</div><div class="kpi-val" id="oc-vip">0</div></div>
-      </div>
-      <div id="oc-chips" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px"></div>
-      <div class="tcard"><div class="tcard-top"><div class="tcard-title">Клиенты</div></div>
-        <div class="tscroll"><table><thead><tr><th>Имя</th><th>Телефон</th><th>Район</th><th style="text-align:right">Заказов</th><th style="text-align:right">Сумма</th><th style="text-align:right">Ср.чек</th><th>Последний</th><th>Статус</th></tr></thead>
-          <tbody id="oc-tbody"></tbody></table></div></div>
     </div>
   </div>
 </div>
@@ -850,6 +830,24 @@ tr.today td{background:rgba(240,165,0,.04)}
     </div>
     <!-- OVERVIEW · Пульт дня -->
     <div id="dir-overview">
+
+      <!-- DIRIIKO:START «Как в iiko» — зеркало учёта iiko (03.10.2026, CEO) -->
+      <style>
+      .dki-card{background:var(--card);border:1px solid var(--bdr);border-radius:var(--rr);padding:14px 16px;margin-bottom:12px}
+      .dki-h{font-size:14px;font-weight:800;margin-bottom:8px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;align-items:baseline}
+      .dki-sub{font-size:11px;color:var(--t3);font-weight:500}
+      .dki-h2{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--t3);margin:12px 0 4px}
+      .dki-row{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px dashed var(--bdr);font-size:13px;line-height:1.35}
+      .dki-row b{white-space:nowrap}
+      .dki-row.big b{font-size:18px}.dki-row.sum{font-weight:700}.dki-row.total{font-weight:800;font-size:14px;border-bottom:2px solid var(--bdr)}
+      .dki-row.good b{color:var(--green)}.dki-row.bad b{color:var(--red)}
+      .dki-chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 8px}.dki-chips span{font-size:11.5px;background:var(--bg2);border:1px solid var(--bdr);border-radius:999px;padding:3px 9px;color:var(--t2)}
+      .dki-note{font-size:12px;color:var(--t2);margin:6px 0;line-height:1.4}
+      /* убрать ненужное (CEO 03.10): расчётная «чистая прибыль» дашборда, двойной gross фудкоста, цель 42 млн */
+      #dir-overview .kpi:has(#ov-food),#dir-overview .kpi:has(#ov-net),#dir-overview>div:has(#ov-goal-bar){display:none}
+      </style>
+      <div id="dir-iiko"><div class="dki-card"><div class="dki-h">📊 Как в iiko</div><div class="empty">Загрузка…</div></div></div>
+      <!-- DIRIIKO:END -->
       <div class="kpi-row" style="grid-template-columns:repeat(auto-fit,minmax(165px,1fr))">
         <div class="kpi net"><div class="kpi-lbl">📈 Чистая прибыль</div><div class="kpi-val" id="ov-net">—</div><div class="kpi-sub" id="ov-net-sub"></div></div>
         <div class="kpi"><div class="kpi-lbl">🍽 Food cost (gross)</div><div class="kpi-val" id="ov-food">—</div><div class="kpi-sub" id="ov-food-sub">реальный · цель ≤ 44%</div></div>
@@ -2208,6 +2206,7 @@ function dirTab(tab,btn){
 const PROFIT_GOAL=42000000;   // цель чистой прибыли за месяц (+50% к июньскому run-rate)
 let _ovSynced=null;
 function renderDirCockpit(){
+  renderIikoPL();   // «Как в iiko» — первым, независимо от расчётов ниже
   if(!_hrLoaded&&!_hrLoading)loadHR().then(()=>renderDirCockpit());   // подгрузить сотрудников для «ЗП сегодня»
   const mFrm=`${dirYr}-${pad(dirMo+1)}-01`;
   const ny=dirMo===11?dirYr+1:dirYr,nm=dirMo===11?0:dirMo+1;
@@ -3222,10 +3221,46 @@ async function sjDelete(){
 
 /* CRM:JS:START Клиенты — Supabase crm_clients/crm_activities. Один инструмент продажника (CEO 03.10.2026). */
 let CRM_C=[], CRM_ACT=[], CRM_DATE=null, CRM_TYPE='all', CRM_STAT='all', CRM_CUR=null, CRM_OPS=[];
-const CRM_ST={new:['🆕','Новый'],called:['📞','Позвонили'],interested:['👍','Заинтересован'],trial:['🧪','Пробный заказ'],client:['✅','Клиент'],lost:['❌','Потерян']};
-const CRM_TY={corporate:['🏢','Корп'],individual:['👤','Частный']};
-const CRM_SRC={base:'База B2B',call:'Звонок',web:'Сайт',instagram:'Instagram',target:'Target',repeat:'Старый клиент',telegram:'Telegram',manual:'Вручную',other:'Другое'};
-const CRM_OUT={no_answer:['📵','Не взял'],talked:['💬','Поговорили'],interested:['👍','Заинтересован'],trial_booked:['🧪','Договорились о пробном'],rejected:['❌','Отказ'],order:['💰','Заказ'],web_paid:['🌐','Заказ на сайте (оплачен)'],web_new:['🌐','Заказ на сайте'],web_invoice:['🌐','Заказ на сайте (счёт)'],web_refunded:['↩️','Возврат']};
+function crmLang(){try{return localStorage.getItem('crm_lang')||'ru'}catch(_){return 'ru'}}
+function crmToggleLang(){const nl=crmLang()==='ru'?'uz':'ru';try{localStorage.setItem('crm_lang',nl)}catch(_){}crmApplyLang();crmRender();if(CRM_CUR)crmOpen(CRM_CUR.id)}
+const CRM_TXT={
+  whoWorks:['Кто работает:',"Kim ishlayapti:"], name:['имя',"ism"], today:['Сегодня',"Bugun"],
+  all:['Все',"Barchasi"], corporate:['Корп',"Korporativ"], individual:['Частные',"Jismoniy shaxslar"],
+  toCallback:['К перезвону',"Qayta qo'ng'iroqqa"], mine:['Мои',"Mening"], allStatuses:['Все статусы',"Barcha statuslar"],
+  st_new:['Новые',"Yangi"], st_called:['Позвонили',"Qo'ng'iroq qilindi"], st_interested:['Заинтересованы',"Qiziqishdi"],
+  st_trial:['Пробный',"Sinov"], st_client:['Клиенты',"Mijozlar"], st_lost:['Потеряны',"Yo'qotilgan"],
+  search:['🔍 имя, компания, телефон',"🔍 ism, kompaniya, telefon"], newClient:['Новый клиент',"Yangi mijoz"],
+  addContact:['＋ Добавить контакт',"＋ Aloqa qo'shish"], call:['📞 Звонок',"📞 Qo'ng'iroq"], trialOrder:['🧪 Пробный заказ',"🧪 Sinov buyurtma"],
+  order:['💰 Заказ',"💰 Buyurtma"], note:['📝 Заметка',"📝 Izoh"], talked:['💬 Поговорили',"💬 Gaplashdik"],
+  interestedOpt:['👍 Заинтересован',"👍 Qiziqdi"], trialBooked:['🧪 Договорились о пробном',"🧪 Sinovga kelishildik"],
+  noAnswer:['📵 Не взял',"📵 Javob bermadi"], rejected:['❌ Отказ',"❌ Rad etdi"], sumPh:['сумма, сум',"summa, so'm"],
+  portionsPh:['порций',"porsiya"], callbackTitle:['перезвонить',"qayta qo'ng'iroq"], eventDateTitle:['дата события',"voqea sanasi"],
+  commentPh:['комментарий (что сказал клиент)',"izoh (mijoz nima dedi)"], saveContact:['Сохранить контакт',"Saqlash"],
+  card:['✏️ Карточка',"✏️ Karta"], statusBtn:['🔁 Статус',"🔁 Status"], feed:['Лента',"Lenta"],
+  loading:['Загрузка…',"Yuklanmoqda…"], emptyFilter:['Пусто в этом фильтре.',"Bu filtrda bo'sh."],
+  noEvents:['Событий пока нет.',"Hali voqealar yo'q."], needOp:['Укажите «Кто работает» вверху экрана',"Ekran tepasida ishchini kiriting"],
+  orders:['заказов',"buyurtma"], perDay:['порц/день',"porsiya/kun"], callbackLbl:['перезвонить',"qayta qo'ng'iroq"],
+  last:['посл.',"oxirgi"], status:['Статус:',"Status:"], callbackIfNeeded:["Перезвонить (если нужно)","Qayta qo'ng'iroq (agar kerak bo'lsa)"],
+  newClientTitle:['Новый клиент',"Yangi mijoz"], clientCard:['Карточка клиента',"Mijoz kartasi"],
+  type:['Тип',"Turi"], statusLbl:['Статус',"Status"], companyLbl:['Компания (для корп)',"Kompaniya (korp uchun)"],
+  contactName:['Контакт (имя) *',"Kontakt (ism) *"], phone:['Телефон',"Telefon"], district:['Район',"Tuman"],
+  source:['Откуда',"Qayerdan"], portionsDay:['Порций/день (корп)',"Kuniga porsiya (korp)"], assignedTo:['Ведёт',"Mas'ul"],
+  callbackField:['Перезвонить',"Qayta qo'ng'iroq"], noteLbl:['Заметка',"Izoh"], save:['Сохранить',"Saqlash"],
+  toFeed:['← К ленте',"← Lentaga"], deleteClient:['Удалить клиента',"Mijozni o'chirish"], cancel:['Отмена',"Bekor qilish"],
+  phonePh:['+998 90 123 45 67','+998 90 123 45 67'],
+};
+function _t(k){const e=CRM_TXT[k];return e?e[crmLang()==='uz'?1:0]:k}
+function crmApplyLang(){
+  const uz=crmLang()==='uz';
+  const btn=document.getElementById('crm-lang-btn');if(btn)btn.textContent=uz?'RU':'UZ';
+  document.querySelectorAll('#mkt-clients [data-i18n]').forEach(el=>{el.textContent=_t(el.getAttribute('data-i18n'))});
+  document.querySelectorAll('#mkt-clients [data-i18n-ph]').forEach(el=>{el.placeholder=_t(el.getAttribute('data-i18n-ph'))});
+}
+const CRM_ST={new:{e:'🆕',ru:'Новый',uz:'Yangi'},called:{e:'📞',ru:'Позвонили',uz:"Qo'ng'iroq qilindi"},interested:{e:'👍',ru:'Заинтересован',uz:'Qiziqdi'},trial:{e:'🧪',ru:'Пробный заказ',uz:'Sinov buyurtma'},client:{e:'✅',ru:'Клиент',uz:'Mijoz'},lost:{e:'❌',ru:'Потерян',uz:"Yo'qotildi"}};
+const CRM_TY={corporate:{e:'🏢',ru:'Корп',uz:'Korporativ'},individual:{e:'👤',ru:'Частный',uz:'Jismoniy shaxs'}};
+const CRM_SRC={base:{ru:'База B2B',uz:'B2B bazasi'},call:{ru:'Звонок',uz:"Qo'ng'iroq"},web:{ru:'Сайт',uz:'Sayt'},instagram:{ru:'Instagram',uz:'Instagram'},target:{ru:'Target',uz:'Target'},repeat:{ru:'Старый клиент',uz:'Eski mijoz'},telegram:{ru:'Telegram',uz:'Telegram'},manual:{ru:'Вручную',uz:"Qo'lda"},other:{ru:'Другое',uz:'Boshqa'}};
+const CRM_OUT={no_answer:{e:'📵',ru:'Не взял',uz:'Javob bermadi'},talked:{e:'💬',ru:'Поговорили',uz:'Gaplashdik'},interested:{e:'👍',ru:'Заинтересован',uz:'Qiziqdi'},trial_booked:{e:'🧪',ru:'Договорились о пробном',uz:'Sinovga kelishildik'},rejected:{e:'❌',ru:'Отказ',uz:'Rad etdi'},order:{e:'💰',ru:'Заказ',uz:'Buyurtma'},web_paid:{e:'🌐',ru:'Заказ на сайте (оплачен)',uz:"Saytda buyurtma (to'landi)"},web_new:{e:'🌐',ru:'Заказ на сайте',uz:'Saytda buyurtma'},web_invoice:{e:'🌐',ru:'Заказ на сайте (счёт)',uz:'Saytda buyurtma (hisob)'},web_refunded:{e:'↩️',ru:'Возврат',uz:'Qaytarish'}};
+function crmL(map,key){const x=map[key];if(!x)return ['',key];const lang=crmLang()==='uz'?'uz':'ru';return [x.e||'',x[lang]||x.ru||key]}
 function crmEsc(s){return String(s==null?'':s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
 function crmYmd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function crmToday(){return crmYmd(new Date())}
@@ -3239,9 +3274,10 @@ function crmH(extra){return Object.assign({'Content-Type':'application/json'},au
 
 async function crmLoad(){
   if(!CRM_DATE)CRM_DATE=crmToday();
+  crmApplyLang();
   const di=document.getElementById('crm-date');if(di)di.value=CRM_DATE;
   const oi=document.getElementById('crm-op');if(oi&&!oi.value)oi.value=crmOp();
-  const box=document.getElementById('crm-list');if(box&&!CRM_C.length)box.innerHTML='<div class="empty">Загрузка…</div>';
+  const box=document.getElementById('crm-list');if(box&&!CRM_C.length)box.innerHTML=`<div class="empty">${_t('loading')}</div>`;
   try{
     for(let i=0;i<20&&!(typeof AB_SESS!=='undefined'&&AB_SESS&&AB_SESS.access_token);i++){await new Promise(r=>setTimeout(r,200));}
     if(typeof authEnsure==='function')await authEnsure();
@@ -3263,9 +3299,9 @@ function crmRender(){
   const sum=mine.filter(a=>a.type==='order').reduce((s,a)=>s+(+a.amount||0),0);
   const due=CRM_C.filter(crmDue).length;
   const k=document.getElementById('crm-kpi');
-  if(k)k.innerHTML=[['Звонков',cnt(a=>a.type==='call')],['👍',cnt(a=>a.type==='call'&&a.outcome==='interested')],['🧪',cnt(a=>a.type==='trial'||a.outcome==='trial_booked')],
-    ['💰 заказов',cnt(a=>a.type==='order')],['сум',crmFmt(sum)],['❌',cnt(a=>a.outcome==='rejected')]].map(([t,v])=>`<div>${t}<b>${v}</b></div>`).join('')
-    +`<div class="due">🔔 перезвонить<b>${due}</b></div>`+(op?`<div>👤<b>${crmEsc(op)}</b></div>`:'');
+  if(k)k.innerHTML=[[crmLang()==='uz'?"Qo'ng'iroqlar":'Звонков',cnt(a=>a.type==='call')],['👍',cnt(a=>a.type==='call'&&a.outcome==='interested')],['🧪',cnt(a=>a.type==='trial'||a.outcome==='trial_booked')],
+    ['💰 '+_t('orders'),cnt(a=>a.type==='order')],[crmLang()==='uz'?"so'm":'сум',crmFmt(sum)],['❌',cnt(a=>a.outcome==='rejected')]].map(([t,v])=>`<div>${t}<b>${v}</b></div>`).join('')
+    +`<div class="due">🔔 ${_t('callbackLbl')}<b>${due}</b></div>`+(op?`<div>👤<b>${crmEsc(op)}</b></div>`:'');
   const q=((document.getElementById('crm-q')||{}).value||'').toLowerCase().trim();
   const list=CRM_C.filter(c=>{
     if(CRM_TYPE==='due'&&!crmDue(c))return false;
@@ -3276,49 +3312,52 @@ function crmRender(){
     return true;
   });
   const box=document.getElementById('crm-list');if(!box)return;
-  if(!list.length){box.innerHTML='<div class="empty">Пусто в этом фильтре.</div>';return}
+  if(!list.length){box.innerHTML=`<div class="empty">${_t('emptyFilter')}</div>`;return}
+  const sumWord=crmLang()==='uz'?"so'm":'сум';
   box.innerHTML=list.slice(0,300).map(c=>{
     const name=c.company||c.contact_name||'—', sub=[c.company?c.contact_name:null,c.district].filter(Boolean).join(' · ');
     const tel=(c.phone||'').trim(), digits=tel.replace(/\D/g,''), draft=/x{2,}|уточн|\?{2,}/i.test(tel);
     const dial=tel?((!draft&&digits.length>=9)?`<a class="crm-tel" href="tel:${tel.startsWith('+')?'+':''}${digits}" onclick="event.stopPropagation()">📞 ${crmEsc(tel)}</a>`:'☎ '+crmEsc(tel)):'';
     const last=c.last_activity_at?new Date(c.last_activity_at).toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit'}):'';
-    const st=CRM_ST[c.status]||['',c.status], ty=CRM_TY[c.type]||['',c.type];
+    const st=crmL(CRM_ST,c.status), ty=crmL(CRM_TY,c.type);
     return `<div class="crm-card${crmDue(c)?' due':''}" onclick="crmOpen('${c.id}')">
       <div class="crm-row"><div><div class="crm-name">${crmEsc(name)}</div>
-        <div class="crm-meta">${crmEsc(sub)}${sub&&dial?' · ':''}${dial}${c.orders_count?'<br>💰 заказов '+c.orders_count+' · '+crmFmt(c.total_spent)+' сум':''}
-        ${c.callback_at?'<br>🔔 перезвонить <b'+(crmDue(c)?' style="color:#dc2626"':'')+'>'+crmEsc(c.callback_at)+'</b>':''}${last?' · посл. '+last:''}${c.assigned_to?' · 👤 '+crmEsc(c.assigned_to):''}</div></div>
+        <div class="crm-meta">${crmEsc(sub)}${sub&&dial?' · ':''}${dial}${c.orders_count?'<br>💰 '+_t('orders')+' '+c.orders_count+' · '+crmFmt(c.total_spent)+' '+sumWord:''}
+        ${c.callback_at?'<br>🔔 '+_t('callbackLbl')+' <b'+(crmDue(c)?' style="color:#dc2626"':'')+'>'+crmEsc(c.callback_at)+'</b>':''}${last?' · '+_t('last')+' '+last:''}${c.assigned_to?' · 👤 '+crmEsc(c.assigned_to):''}</div></div>
         <div class="crm-tags"><span class="tg ${c.status}">${st[0]} ${st[1]}</span><span class="tg ${c.type}">${ty[0]} ${ty[1]}</span></div></div></div>`}).join('')
     +(list.length>300?'<div class="empty">Показаны первые 300 — уточните поиск.</div>':'');
+  crmApplyLang();
 }
 function crmClose(){document.getElementById('crm-modal').classList.remove('on');CRM_CUR=null}
 function crmSheet(html){document.getElementById('crm-sheet').innerHTML=html;document.getElementById('crm-modal').classList.add('on')}
 const crmV=id=>{const e=document.getElementById(id);return e?String(e.value||'').trim():''};
-function crmSelOpts(map,cur){return Object.entries(map).map(([k,v])=>`<option value="${k}" ${k===cur?'selected':''}>${Array.isArray(v)?v[0]+' '+v[1]:v}</option>`).join('')}
+function crmSelOpts(map,cur){return Object.keys(map).map(k=>{const l=crmL(map,k);return `<option value="${k}" ${k===cur?'selected':''}>${(l[0]?l[0]+' ':'')+l[1]}</option>`}).join('')}
 
 async function crmOpen(id){
   const c=CRM_C.find(x=>x.id===id);if(!c)return;CRM_CUR=c;
-  crmSheet(`<h3>${crmEsc(c.company||c.contact_name||'Клиент')}<button class="x" onclick="crmClose()">×</button></h3><div class="empty">Загрузка ленты…</div>`);
+  const sumWord=crmLang()==='uz'?"so'm":'сум';
+  crmSheet(`<h3>${crmEsc(c.company||c.contact_name||'Клиент')}<button class="x" onclick="crmClose()">×</button></h3><div class="empty">${_t('loading')}</div>`);
   let feed=[];
   try{const r=await crmMust(fetch(`${SUPA_URL}/rest/v1/crm_activities?client_id=eq.${id}&select=*&order=created_at.desc&limit=100`,{headers:authH()}));feed=await r.json()}catch(e){feed=[]}
   if(!CRM_CUR||CRM_CUR.id!==id)return;
-  const st=CRM_ST[c.status]||['',c.status];
-  const feedHtml=feed.length?feed.map(a=>{const o=CRM_OUT[a.outcome]||(a.type==='order'?['💰','Заказ']:a.type==='trial'?['🧪','Пробный']:a.type==='note'?['📝','Заметка']:a.type==='status'?['🔁','Статус']:['📞','Звонок']);
-      return `<div class="crm-ev"><div class="ic">${o[0]}</div><div><div><b>${o[1]}</b>${a.amount?' · '+crmFmt(a.amount)+' сум':''}${a.portions?' · '+a.portions+' порц.':''}${a.callback_at?' · 🔔 '+crmEsc(a.callback_at):''}</div>
-        ${a.comment?'<div>'+crmEsc(a.comment)+'</div>':''}<div class="t">${crmEsc(a.date)}${a.operator?' · '+crmEsc(a.operator):''}</div></div></div>`}).join(''):'<div class="empty">Событий пока нет.</div>';
+  const st=crmL(CRM_ST,c.status);
+  const feedHtml=feed.length?feed.map(a=>{const o=CRM_OUT[a.outcome]?crmL(CRM_OUT,a.outcome):(a.type==='order'?['💰',_t('order').replace('💰 ','')]:a.type==='trial'?['🧪',_t('trialOrder').replace('🧪 ','')]:a.type==='note'?['📝',_t('note').replace('📝 ','')]:a.type==='status'?['🔁',_t('statusLbl')]:['📞',_t('call').replace('📞 ','')]);
+      return `<div class="crm-ev"><div class="ic">${o[0]}</div><div><div><b>${o[1]}</b>${a.amount?' · '+crmFmt(a.amount)+' '+sumWord:''}${a.portions?' · '+a.portions+' '+_t('portionsPh'):''}${a.callback_at?' · 🔔 '+crmEsc(a.callback_at):''}</div>
+        ${a.comment?'<div>'+crmEsc(a.comment)+'</div>':''}<div class="t">${crmEsc(a.date)}${a.operator?' · '+crmEsc(a.operator):''}</div></div></div>`}).join(''):`<div class="empty">${_t('noEvents')}</div>`;
   crmSheet(`<h3><span>${crmEsc(c.company||c.contact_name||'Клиент')} <span class="tg ${c.status}" style="font-size:11px;padding:3px 8px;border-radius:999px;color:#fff;background:#6b7280">${st[0]} ${st[1]}</span></span><button class="x" onclick="crmClose()">×</button></h3>
-    <div class="crm-meta" style="font-size:13px;color:var(--t2)">${crmEsc([c.contact_name&&c.company?c.contact_name:null,c.phone,c.district,CRM_SRC[c.source]||c.source].filter(Boolean).join(' · '))}
-      ${c.orders_count?'<br>💰 заказов '+c.orders_count+' · '+crmFmt(c.total_spent)+' сум':''}${c.portions_per_day?' · '+c.portions_per_day+' порц/день':''}${c.note?'<br>📝 '+crmEsc(c.note):''}${c.lost_reason?'<br>❌ '+crmEsc(c.lost_reason):''}</div>
+    <div class="crm-meta" style="font-size:13px;color:var(--t2)">${crmEsc([c.contact_name&&c.company?c.contact_name:null,c.phone,c.district,crmL(CRM_SRC,c.source)[1]||c.source].filter(Boolean).join(' · '))}
+      ${c.orders_count?'<br>💰 '+_t('orders')+' '+c.orders_count+' · '+crmFmt(c.total_spent)+' '+sumWord:''}${c.portions_per_day?' · '+c.portions_per_day+' '+_t('perDay'):''}${c.note?'<br>📝 '+crmEsc(c.note):''}${c.lost_reason?'<br>❌ '+crmEsc(c.lost_reason):''}</div>
     <div class="crm-quick" id="crm-quick">
-      <div class="crm-lbl">＋ Добавить контакт</div>
-      <div class="crm-2"><select class="crm-sel" id="crm-a-type" onchange="crmQuickUi()"><option value="call">📞 Звонок</option><option value="trial">🧪 Пробный заказ</option><option value="order">💰 Заказ</option><option value="note">📝 Заметка</option></select>
-      <select class="crm-sel" id="crm-a-out"><option value="talked">💬 Поговорили</option><option value="interested">👍 Заинтересован</option><option value="trial_booked">🧪 Договорились о пробном</option><option value="no_answer">📵 Не взял</option><option value="rejected">❌ Отказ</option></select></div>
-      <div class="crm-2" id="crm-a-money" style="display:none"><input class="crm-in" id="crm-a-amount" type="number" inputmode="numeric" step="1000" placeholder="сумма, сум"><input class="crm-in" id="crm-a-portions" type="number" inputmode="numeric" placeholder="порций"></div>
-      <div class="crm-2"><input class="crm-in" id="crm-a-cb" type="date" title="перезвонить"><input class="crm-in" id="crm-a-date" type="date" value="${crmToday()}" title="дата события"></div>
-      <input class="crm-in" id="crm-a-comment" placeholder="комментарий (что сказал клиент)">
-      <button class="crm-btn ok" onclick="crmAddActivity()">Сохранить контакт</button>
+      <div class="crm-lbl">${_t('addContact')}</div>
+      <div class="crm-2"><select class="crm-sel" id="crm-a-type" onchange="crmQuickUi()"><option value="call">${_t('call')}</option><option value="trial">${_t('trialOrder')}</option><option value="order">${_t('order')}</option><option value="note">${_t('note')}</option></select>
+      <select class="crm-sel" id="crm-a-out"><option value="talked">${_t('talked')}</option><option value="interested">${_t('interestedOpt')}</option><option value="trial_booked">${_t('trialBooked')}</option><option value="no_answer">${_t('noAnswer')}</option><option value="rejected">${_t('rejected')}</option></select></div>
+      <div class="crm-2" id="crm-a-money" style="display:none"><input class="crm-in" id="crm-a-amount" type="number" inputmode="numeric" step="1000" placeholder="${_t('sumPh')}"><input class="crm-in" id="crm-a-portions" type="number" inputmode="numeric" placeholder="${_t('portionsPh')}"></div>
+      <div class="crm-2"><input class="crm-in" id="crm-a-cb" type="date" title="${_t('callbackTitle')}"><input class="crm-in" id="crm-a-date" type="date" value="${crmToday()}" title="${_t('eventDateTitle')}"></div>
+      <input class="crm-in" id="crm-a-comment" placeholder="${_t('commentPh')}">
+      <button class="crm-btn ok" onclick="crmAddActivity()">${_t('saveContact')}</button>
     </div>
-    <div class="crm-2" style="margin-top:8px"><button class="crm-btn sec" onclick="crmEdit('${c.id}')">✏️ Карточка</button><button class="crm-btn sec" onclick="crmStatusMenu()">🔁 Статус</button></div>
-    <div class="crm-feed"><div class="crm-lbl">Лента (${feed.length})</div>${feedHtml}</div>`);
+    <div class="crm-2" style="margin-top:8px"><button class="crm-btn sec" onclick="crmEdit('${c.id}')">${_t('card')}</button><button class="crm-btn sec" onclick="crmStatusMenu()">${_t('statusBtn')}</button></div>
+    <div class="crm-feed"><div class="crm-lbl">${_t('feed')} (${feed.length})</div>${feedHtml}</div>`);
   crmQuickUi();
 }
 function crmQuickUi(){const t=crmV('crm-a-type');const m=document.getElementById('crm-a-money'),o=document.getElementById('crm-a-out');if(m)m.style.display=(t==='order'||t==='trial')?'':'none';if(o)o.style.display=t==='call'?'':'none'}
@@ -3332,11 +3371,11 @@ async function crmAddActivity(){
   const c=CRM_CUR;if(!c)return;
   const type=crmV('crm-a-type'), outcome=type==='call'?crmV('crm-a-out'):(type==='order'?'order':type==='trial'?'trial_booked':null);
   const amount=+crmV('crm-a-amount')||null, portions=+crmV('crm-a-portions')||null, cb=crmV('crm-a-cb')||null, comment=crmV('crm-a-comment')||null, date=crmV('crm-a-date')||crmToday();
-  if(type==='order'&&!amount&&!portions){alert('Укажите сумму или порции заказа');return}
-  if(type==='call'&&outcome==='interested'&&!cb){alert('Заинтересован — поставьте дату перезвона');return}
+  if(type==='order'&&!amount&&!portions){alert(crmLang()==='uz'?'Buyurtma summasi yoki porsiyasini kiriting':'Укажите сумму или порции заказа');return}
+  if(type==='call'&&outcome==='interested'&&!cb){alert(crmLang()==='uz'?"Qiziqdi — qayta qo'ng'iroq sanasini qo'ying":'Заинтересован — поставьте дату перезвона');return}
   const op=crmOp()||((typeof AB_SESS!=='undefined'&&AB_SESS&&AB_SESS.email)||null);
-  if(!op){alert('Укажите «Кто работает» вверху экрана');return}
-  let reason=null;if(type==='call'&&outcome==='rejected'){reason=prompt('Причина отказа:')||null}
+  if(!op){alert(_t('needOp'));return}
+  let reason=null;if(type==='call'&&outcome==='rejected'){reason=prompt(crmLang()==='uz'?'Rad etish sababi:':'Причина отказа:')||null}
   try{
     if(typeof authEnsure==='function')await authEnsure();
     await crmMust(fetch(`${SUPA_URL}/rest/v1/crm_activities`,{method:'POST',headers:crmH({Prefer:'return=minimal'}),body:JSON.stringify({client_id:c.id,date,type,outcome,amount,portions,comment:[comment,reason].filter(Boolean).join(' · ')||null,callback_at:cb,operator:op,source:'manual'})}));
@@ -3349,12 +3388,12 @@ async function crmAddActivity(){
 }
 function crmStatusMenu(){
   const c=CRM_CUR;if(!c)return;
-  crmSheet(`<h3>Статус: ${crmEsc(c.company||c.contact_name||'')}<button class="x" onclick="crmClose()">×</button></h3>
-    ${Object.entries(CRM_ST).map(([k,v])=>`<button class="crm-btn sec" style="text-align:left" onclick="crmSetStatus('${k}')">${v[0]} ${v[1]}${c.status===k?' ✓':''}</button>`).join('')}
-    <div class="crm-lbl" style="margin-top:8px">Перезвонить (если нужно)</div><input class="crm-in" id="crm-s-cb" type="date" value="${crmEsc(c.callback_at||'')}">`);
+  crmSheet(`<h3>${_t('status')} ${crmEsc(c.company||c.contact_name||'')}<button class="x" onclick="crmClose()">×</button></h3>
+    ${Object.keys(CRM_ST).map(k=>{const v=crmL(CRM_ST,k);return `<button class="crm-btn sec" style="text-align:left" onclick="crmSetStatus('${k}')">${v[0]} ${v[1]}${c.status===k?' ✓':''}</button>`}).join('')}
+    <div class="crm-lbl" style="margin-top:8px">${_t('callbackIfNeeded')}</div><input class="crm-in" id="crm-s-cb" type="date" value="${crmEsc(c.callback_at||'')}">`);
 }
 async function crmSetStatus(st){
-  const c=CRM_CUR;if(!c)return;const cb=crmV('crm-s-cb')||null;let reason=null;if(st==='lost')reason=prompt('Причина (ушёл / отказ):')||null;
+  const c=CRM_CUR;if(!c)return;const cb=crmV('crm-s-cb')||null;let reason=null;if(st==='lost')reason=prompt(crmLang()==='uz'?"Sabab (ketdi / rad etdi):":'Причина (ушёл / отказ):')||null;
   const op=crmOp()||null;
   try{
     if(typeof authEnsure==='function')await authEnsure();
@@ -3365,20 +3404,20 @@ async function crmSetStatus(st){
 }
 function crmEdit(id){
   const c=id?(CRM_C.find(x=>x.id===id)||{}):{};CRM_CUR=id?c:null;
-  crmSheet(`<h3>${id?'Карточка клиента':'Новый клиент'}<button class="x" onclick="crmClose()">×</button></h3>
-    <div class="crm-2"><div><div class="crm-lbl">Тип</div><select class="crm-sel" id="crm-e-type">${crmSelOpts(CRM_TY,c.type||'corporate')}</select></div>
-    <div><div class="crm-lbl">Статус</div><select class="crm-sel" id="crm-e-status">${crmSelOpts(CRM_ST,c.status||'new')}</select></div></div>
-    <div class="crm-lbl">Компания (для корп)</div><input class="crm-in" id="crm-e-company" value="${crmEsc(c.company||'')}" placeholder="Клиника / БЦ / компания">
-    <div class="crm-lbl">Контакт (имя) *</div><input class="crm-in" id="crm-e-name" value="${crmEsc(c.contact_name||'')}" placeholder="Имя">
-    <div class="crm-2"><div><div class="crm-lbl">Телефон</div><input class="crm-in" id="crm-e-phone" inputmode="tel" value="${crmEsc(c.phone||'')}" placeholder="+998 90 123 45 67"></div>
-    <div><div class="crm-lbl">Район</div><input class="crm-in" id="crm-e-district" value="${crmEsc(c.district||'')}"></div></div>
-    <div class="crm-2"><div><div class="crm-lbl">Откуда</div><select class="crm-sel" id="crm-e-source">${crmSelOpts(CRM_SRC,c.source||'call')}</select></div>
-    <div><div class="crm-lbl">Порций/день (корп)</div><input class="crm-in" id="crm-e-portions" type="number" inputmode="numeric" value="${c.portions_per_day==null?'':c.portions_per_day}"></div></div>
-    <div class="crm-2"><div><div class="crm-lbl">Ведёт</div><input class="crm-in" id="crm-e-assigned" list="crm-ops" value="${crmEsc(c.assigned_to||crmOp()||'')}"></div>
-    <div><div class="crm-lbl">Перезвонить</div><input class="crm-in" id="crm-e-cb" type="date" value="${crmEsc(c.callback_at||'')}"></div></div>
-    <div class="crm-lbl">Заметка</div><input class="crm-in" id="crm-e-note" value="${crmEsc(c.note||'')}">
-    <button class="crm-btn" onclick="crmSaveClient('${id||''}')">Сохранить</button>
-    ${id?'<button class="crm-btn sec" onclick="crmOpen(\''+id+'\')">← К ленте</button><button class="crm-btn sec" style="color:#dc2626" onclick="crmDeleteClient(\''+id+'\')">Удалить клиента</button>':'<button class="crm-btn sec" onclick="crmClose()">Отмена</button>'}`);
+  crmSheet(`<h3>${id?_t('clientCard'):_t('newClientTitle')}<button class="x" onclick="crmClose()">×</button></h3>
+    <div class="crm-2"><div><div class="crm-lbl">${_t('type')}</div><select class="crm-sel" id="crm-e-type">${crmSelOpts(CRM_TY,c.type||'corporate')}</select></div>
+    <div><div class="crm-lbl">${_t('statusLbl')}</div><select class="crm-sel" id="crm-e-status">${crmSelOpts(CRM_ST,c.status||'new')}</select></div></div>
+    <div class="crm-lbl">${_t('companyLbl')}</div><input class="crm-in" id="crm-e-company" value="${crmEsc(c.company||'')}" placeholder="Клиника / БЦ / компания">
+    <div class="crm-lbl">${_t('contactName')}</div><input class="crm-in" id="crm-e-name" value="${crmEsc(c.contact_name||'')}" placeholder="${crmLang()==='uz'?'Ism':'Имя'}">
+    <div class="crm-2"><div><div class="crm-lbl">${_t('phone')}</div><input class="crm-in" id="crm-e-phone" inputmode="tel" value="${crmEsc(c.phone||'')}" placeholder="${_t('phonePh')}"></div>
+    <div><div class="crm-lbl">${_t('district')}</div><input class="crm-in" id="crm-e-district" value="${crmEsc(c.district||'')}"></div></div>
+    <div class="crm-2"><div><div class="crm-lbl">${_t('source')}</div><select class="crm-sel" id="crm-e-source">${crmSelOpts(CRM_SRC,c.source||'call')}</select></div>
+    <div><div class="crm-lbl">${_t('portionsDay')}</div><input class="crm-in" id="crm-e-portions" type="number" inputmode="numeric" value="${c.portions_per_day==null?'':c.portions_per_day}"></div></div>
+    <div class="crm-2"><div><div class="crm-lbl">${_t('assignedTo')}</div><input class="crm-in" id="crm-e-assigned" list="crm-ops" value="${crmEsc(c.assigned_to||crmOp()||'')}"></div>
+    <div><div class="crm-lbl">${_t('callbackField')}</div><input class="crm-in" id="crm-e-cb" type="date" value="${crmEsc(c.callback_at||'')}"></div></div>
+    <div class="crm-lbl">${_t('noteLbl')}</div><input class="crm-in" id="crm-e-note" value="${crmEsc(c.note||'')}">
+    <button class="crm-btn" onclick="crmSaveClient('${id||''}')">${_t('save')}</button>
+    ${id?'<button class="crm-btn sec" onclick="crmOpen(\''+id+'\')">'+_t('toFeed')+'</button><button class="crm-btn sec" style="color:#dc2626" onclick="crmDeleteClient(\''+id+'\')">'+_t('deleteClient')+'</button>':'<button class="crm-btn sec" onclick="crmClose()">'+_t('cancel')+'</button>'}`);
 }
 async function crmSaveClient(id){
   const name=crmV('crm-e-name'), company=crmV('crm-e-company');
@@ -3400,6 +3439,61 @@ async function crmDeleteClient(id){
   crmClose();crmLoad();
 }
 /* CRM:JS:END */
+
+/* DIRIIKO:JS:START «Как в iiko»: P&L ровно как в учёте iiko + строка «чего в iiko нет». Данные: iiko_pl_month. */
+let _dkiLast={k:'',ts:0};
+function dkiEsc(s){return String(s==null?'':s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+async function renderIikoPL(force){
+  const box=document.getElementById('dir-iiko');if(!box)return;
+  const mk=`${dirYr}-${pad(dirMo+1)}-01`, d2=new Date(dirYr,dirMo+1,1), mTo=`${d2.getFullYear()}-${pad(d2.getMonth()+1)}-01`;
+  if(!force&&_dkiLast.k===mk&&Date.now()-_dkiLast.ts<60000)return; _dkiLast={k:mk,ts:Date.now()};
+  const F=n=>fmt(Math.round(n));
+  try{
+    if(typeof authEnsure==='function')await authEnsure();
+    const [r1,r2]=await Promise.all([
+      fetch(`${SUPA_URL}/rest/v1/iiko_pl_month?month=eq.${mk}&select=*`,{headers:authH()}),
+      fetch(`${SUPA_URL}/rest/v1/opex?note=eq.hr&date=gte.${mk}&date=lt.${mTo}&select=amount`,{headers:authH()})]);
+    const rows=await r1.json(), hr=await r2.json();
+    if(!Array.isArray(rows)||!rows.length){box.innerHTML=`<div class="dki-card"><div class="dki-h">📊 Как в iiko — ${mk.slice(0,7)}</div><div class="empty">Данных iiko за этот месяц ещё нет (синк каждый час 08–23).</div></div>`;return}
+    const acc={};rows.filter(r=>r.kind==='account').forEach(r=>acc[r.name]={t:r.type,i:+r.incoming||0,o:+r.outgoing||0});
+    const A=(n,f)=>{const k=Object.keys(acc).find(x=>x.startsWith(n));return k?acc[k][f]:0};
+    const pays=rows.filter(r=>r.kind==='paytype');
+    const revenue=A('Торговая выручка','o')-A('Предоставленные скидки','i');
+    const cogsProd=A('Расход продуктов','i'), cogsDel=A('Удаление блюд','i'), shortage=A('Недостача инвентаризации','i'), surplus=A('Излишки инвентаризации','o');
+    const cogs=cogsProd+cogsDel+shortage-surplus;
+    const exps=Object.entries(acc).filter(([n,v])=>v.t==='EXPENSES'||v.t==='OTHER_EXPENSES').map(([n,v])=>[n,v.i-v.o]).filter(x=>x[1]!==0).sort((a,b)=>b[1]-a[1]);
+    const expTotal=exps.reduce((s,x)=>s+x[1],0), gross=revenue-cogs, profit=gross-expTotal;
+    const uz=pays.find(p=>/uzum/i.test(p.name)), uzNet=uz?+uz.net:0, uzComm=Math.round(uzNet*0.29);
+    const hrSum=(Array.isArray(hr)?hr:[]).reduce((s,x)=>s+(+x.amount||0),0), zp=exps.find(x=>/зарплат/i.test(x[0]));
+    const del=rows.filter(r=>r.kind==='deleted'&&/DELETED_/.test(r.name)), delSum=del.reduce((s,r)=>s+(+r.gross||0),0), delCnt=del.reduce((s,r)=>s+(+r.orders||0),0);
+    const acq=A('Денежные средства, эквайринг','i'), cashOut=A('Главная касса','o'), payIn=A('Задолженность перед поставщиками','i'), payOut=A('Задолженность перед поставщиками','o');
+    const synced=rows[0].synced_at?new Date(rows[0].synced_at).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
+    const pct=v=>revenue>0?(v/revenue*100).toFixed(1)+' %':'';
+    const line=(l,v,cls)=>`<div class="dki-row ${cls||''}"><span>${l}</span><b>${F(v)}</b></div>`;
+    const delBad=revenue>0&&delSum/revenue>0.02;
+    box.innerHTML=`<div class="dki-card">
+      <div class="dki-h"><span>📊 Как в iiko — ${mk.slice(0,7)}</span><span class="dki-sub">источник: учёт iiko · обновлено ${synced} · <a href="#" onclick="renderIikoPL(true);return false">обновить</a></span></div>
+      ${line('Выручка (нетто после скидок)',revenue,'big')}
+      <div class="dki-chips">${pays.filter(p=>+p.net>0).sort((a,b)=>b.net-a.net).map(p=>`<span>${dkiEsc(p.name)} <b>${F(+p.net)}</b> · ${pct(+p.net)}</span>`).join('')}</div>
+      ${line('− Расход продуктов (по техкартам) · '+pct(cogsProd),-cogsProd)}
+      ${(shortage||surplus)?line('− Инвентаризация: недостача '+F(shortage)+' − излишки '+F(surplus),-(shortage-surplus),(shortage-surplus)>0?'bad':''):''}
+      ${cogsDel?line('− Удаление блюд со списанием',-cogsDel):''}
+      ${line('= Валовая прибыль · '+pct(gross),gross,'sum')}
+      ${exps.map(([n,v])=>line('− '+dkiEsc(n),-v)).join('')}
+      ${line('= Прибыль по iiko · '+pct(profit),profit,'total '+(profit<0?'bad':'good'))}
+      <div class="dki-h2">Чего в iiko пока нет</div>
+      ${line('− Комиссия Uzum 29 % от '+F(uzNet)+' (в iiko не проведена)',-uzComm,'bad')}
+      ${line('= Прибыль с учётом комиссии Uzum · '+pct(profit-uzComm),profit-uzComm,'total '+((profit-uzComm)<0?'bad':'good'))}
+      ${zp?`<div class="dki-note">ЗП в iiko ${F(zp[1])} — внесена пакетом как оценка; по HR-табелю начислено ${F(hrSum)}${(hrSum&&Math.abs(hrSum-zp[1])>zp[1]*0.05)?' ⚠️ расходятся — нужна ведомость всех сотрудников':''}</div>`:''}
+      <div class="dki-h2">Контроль</div>
+      ${line('Удалённые заказы: '+delCnt+' шт.'+(delBad?' ⚠️ больше 2 % выручки':''),delSum,delBad?'bad':'')}
+      ${line('Эквайринг: поступило по iiko',acq)}
+      ${line('Поставщики: накладные '+F(payOut)+' / оплачено '+F(payIn)+' → долг за месяц',payOut-payIn,(payOut-payIn)>0?'bad':'')}
+      ${line('Выдано из главной кассы (по iiko)',cashOut)}
+    </div>`;
+  }catch(e){box.innerHTML=`<div class="dki-card"><div class="dki-h">📊 Как в iiko</div><div class="empty">Не удалось загрузить: ${dkiEsc((e&&e.message)||e)}</div></div>`}
+}
+/* DIRIIKO:JS:END */
 </script>
 </body>
 </html>
