@@ -457,17 +457,7 @@ tr.today td{background:rgba(240,165,0,.04)}
         <div class="role mkt" onclick="goMkt()">
           <span class="role-icon">📈</span>
           <div class="role-name">Маркетинг</div>
-          <div class="role-desc">Клиенты, лиды<br>продажи блюд</div>
-        </div>
-        <div class="role" onclick="goCalls()" style="--rc:#16a34a">
-          <span class="role-icon">📞</span>
-          <div class="role-name">Обзвон</div>
-          <div class="role-desc">Звонки клиентам<br>воронка дня</div>
-        </div>
-        <div class="role" onclick="goJournal()" style="--rc:#0ea5e9">
-          <span class="role-icon">📒</span>
-          <div class="role-name">Журнал продаж</div>
-          <div class="role-desc">Sotuv jurnali<br>по дням · KPI</div>
+          <div class="role-desc">Клиенты, лиды, обзвон<br>продажи блюд, журнал</div>
         </div>
       </div>
     </div>
@@ -523,13 +513,7 @@ tr.today td{background:rgba(240,165,0,.04)}
       <input type="date" class="dpick" id="f-date" onchange="onFinDate()">
     </div>
     <div style="margin:0 0 14px;padding:11px 15px;border-radius:12px;background:var(--a2);border:1px solid var(--bdr);font-size:12.5px;color:var(--t1);line-height:1.6">
-      📋 <b>Ежедневно в конце смены:</b> 1) внеси расходы (такси/упаковка/бензин…) · 2) закрой кассу — впиши факт-оборот · 3) нажми «💾 Сохранить». Пропустишь день — у директора подсветится «не внесено».
-    </div>
-    <div class="fsec" style="border-left:3px solid var(--green,#10b981)">
-      <div class="fsec-hdr"><div class="fdot"></div><div class="fn">Сверка с кассой (факт-оборот за день)</div><div class="fs" id="recon-hint" style="font-size:12px;color:var(--t3)"></div></div>
-      <div class="fg">
-        <div class="ff"><div class="fl">Факт-оборот по кассовому отчёту</div><input type="number" class="fi" id="fc-actual" placeholder="0" oninput="reconHint()"></div>
-      </div>
+      📋 <b>Ежедневно в конце смены:</b> 1) внеси расходы (такси/упаковка/бензин…) · 2) нажми «💾 Сохранить». Пропустишь день — у директора подсветится «не внесено».
     </div>
     <div class="fsec so" style="border-left:3px solid var(--orange)">
       <div class="fsec-hdr"><div class="fdot"></div><div class="fn">Ежедневные расходы</div><div class="fs" id="dx-sum">0</div></div>
@@ -539,6 +523,7 @@ tr.today td{background:rgba(240,165,0,.04)}
         <div class="ff"><div class="fl">Директор (изъятия из кассы)</div><input type="number" class="fi" id="dx-director" placeholder="0" oninput="dxCalc()"></div>
         <div class="ff"><div class="fl">Бензин</div><input type="number" class="fi" id="dx-benzin" placeholder="0" oninput="dxCalc()"></div>
         <div class="ff"><div class="fl">Прочее</div><input type="number" class="fi" id="dx-prochee" placeholder="0" oninput="dxCalc()"></div>
+        <div class="ff" style="grid-column:1/-1"><div class="fl">Прочее — что именно куплено</div><input type="text" class="fi" id="dx-prochee-note" placeholder="например: сковороды для кухни" oninput="dxNoteSave()"></div>
       </div>
       <div style="padding:10px 18px;border-top:1px solid var(--bdr);font-size:12px;color:var(--t3)">Вносит менеджер ежедневно. Выручка, себестоимость, зарплата и аренда считаются автоматически.</div>
     </div>
@@ -586,6 +571,8 @@ tr.today td{background:rgba(240,165,0,.04)}
       <button class="tab" onclick="mktTab('sales',this)">🍽 Продажи блюд</button>
       <button class="tab" onclick="mktTab('leads',this)">📋 Лиды</button>
       <button class="tab" onclick="mktTab('orders',this)">🛒 Из заказов</button>
+      <button class="tab" onclick="goCalls()">📞 Обзвон</button>
+      <button class="tab" onclick="goJournal()">📒 Журнал продаж</button>
     </div>
     <!-- CLIENTS -->
     <div id="mkt-clients">
@@ -716,7 +703,7 @@ tr.today td{background:rgba(240,165,0,.04)}
     <div class="hdr-chip chip-blue">Обзвон</div>
     <div class="sep"></div>
     <button class="hbtn" onclick="ccLoad()">⟲ Обновить</button>
-    <button class="hbtn" onclick="goLanding()">← Выход</button>
+    <button class="hbtn" onclick="goMkt()">← Маркетинг</button>
   </div>
   <div class="cc-wrap">
     <div class="cc-kpi" id="cc-kpi"></div>
@@ -789,7 +776,7 @@ tr.today td{background:rgba(240,165,0,.04)}
     <div class="hdr-chip chip-blue">Журнал продаж</div>
     <div class="sep"></div>
     <button class="hbtn" onclick="sjLoad()">⟲ Обновить</button>
-    <button class="hbtn" onclick="goLanding()">← Выход</button>
+    <button class="hbtn" onclick="goMkt()">← Маркетинг</button>
   </div>
   <div class="sj-wrap">
     <div class="sj-date">
@@ -812,11 +799,12 @@ tr.today td{background:rgba(240,165,0,.04)}
   <div class="lbox">
     <div class="licon">🔐</div>
     <div class="ltitle">Ali Baba Dashboard</div>
-    <div class="lsub">Вход в аккаунт</div>
-    <input type="email" class="linp" id="au-email" placeholder="email" autocomplete="username" style="margin-bottom:10px">
-    <input type="password" class="linp" id="au-pass" placeholder="пароль" autocomplete="current-password" onkeydown="if(event.key==='Enter')authLogin()">
+    <div class="lsub">Вход директора</div>
+    <!-- 03.10.2026 (CEO): логин убран — вход директора только по паролю; email зашит -->
+    <input type="hidden" id="au-email" value="director@alibaba.uz">
+    <input type="password" class="linp" id="au-pass" placeholder="пароль" inputmode="numeric" autocomplete="current-password" onkeydown="if(event.key==='Enter')authLogin()">
     <button class="lbtn" onclick="authLogin()">Войти →</button>
-    <div class="lerr" id="lerr">Неверный email или пароль</div>
+    <div class="lerr" id="lerr">Неверный пароль</div>
     <button class="hbtn" style="margin:16px auto 0;display:flex" onclick="show('landing')">← Назад</button>
   </div>
 </div>
@@ -881,6 +869,7 @@ tr.today td{background:rgba(240,165,0,.04)}
         <input type="date" id="df-to" class="df-inp" title="по">
         <button class="df-btn" onclick="applyDateFilter()">Показать</button>
         <button class="df-btn df-ghost" onclick="todayFilter()">Сегодня</button>
+        <button class="df-btn df-ghost" onclick="weekFilter()">Неделя</button>
         <button class="df-btn df-ghost" onclick="clearDateFilter()">Весь месяц</button>
       </div>
       <div class="kpi-row">
@@ -893,6 +882,11 @@ tr.today td{background:rgba(240,165,0,.04)}
         <div class="kpi"><div class="kpi-lbl">Food cost % (COGS/оборот net)</div><div class="kpi-val" id="dk-food">—</div><div class="kpi-sub" id="dk-food-sub">на gross ~44% · net завышен из-за Uzum</div></div>
         <div class="kpi"><div class="kpi-lbl">Labor cost % (ФОТ/оборот)</div><div class="kpi-val" id="dk-labor">—</div><div class="kpi-sub">цель ≤ 30%</div></div>
         <div class="kpi"><div class="kpi-lbl">Маржа (чистая)</div><div class="kpi-val" id="dk-margin">—</div><div class="kpi-sub">чистая прибыль / оборот</div></div>
+      </div>
+      <div class="kpi-row" style="grid-template-columns:repeat(3,1fr);margin-top:12px">
+        <div class="kpi"><div class="kpi-lbl">ЗП (ФОТ), сумма за период</div><div class="kpi-val" id="dk-zp-sum">—</div><div class="kpi-sub">из HR-графика + расходов iiko</div></div>
+        <div class="kpi"><div class="kpi-lbl">OpEx всего за период</div><div class="kpi-val" id="dk-opex-sum">—</div><div class="kpi-sub">фикс + iiko-расходы + резерв 5%</div></div>
+        <div class="kpi"><div class="kpi-lbl">Food cost, сумма</div><div class="kpi-val" id="dk-food-sum">—</div><div class="kpi-sub">себестоимость (COGS)</div></div>
       </div>
       <details class="fold"><summary>🔍 Разбивки — оплаты · расходы · сверка · сравнение</summary><div class="fold-body">
       <div id="dk-compare" style="margin-top:6px;padding:11px 16px;background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--rr);font-size:12.5px;display:flex;gap:20px;flex-wrap:wrap;align-items:center"></div>
@@ -1334,8 +1328,8 @@ function calcFin(e){
   const opex=(e.exp.benzin||0)+(e.exp.taksi||0)+(e.exp.prochie||0)+(e.exp.oylik||0)+(e.exp.dir||0)+(e.exp.oborud||0);
   return{inc,cogs,opex,tot:cogs+opex,gross:inc-cogs,net:inc-cogs-opex};
 }
-function gv(id){return parseFloat(document.getElementById(id).value)||0}
-function sv(id,v){document.getElementById(id).value=v||''}
+function gv(id){const e=document.getElementById(id);return e?(parseFloat(e.value)||0):0}
+function sv(id,v){const e=document.getElementById(id);if(e)e.value=v||''}
 
 // ════════════════════════════════════════
 // CATEGORIES CONFIG
@@ -1498,7 +1492,7 @@ function saveRecon(date){
 }
 function goHR(){renderHR();show('hr');loadHR();}
 function goMkt(){renderClients();renderLeads();loadMktIiko();show('mkt')}
-function goLogin(){const e=document.getElementById('au-email');if(e&&!e.value)e.value='director@alibaba.uz';const p=document.getElementById('au-pass');if(p)p.value='';const er=document.getElementById('lerr');if(er)er.style.display='none';show('login')}
+function goLogin(){const e=document.getElementById('au-email');if(e)e.value='director@alibaba.uz';const p=document.getElementById('au-pass');if(p){p.value='';setTimeout(()=>p.focus(),50)}const er=document.getElementById('lerr');if(er)er.style.display='none';show('login')}
 function goDir(){show('dir');dirRender()}
 
 // ════════════════════════════════════════
@@ -1669,6 +1663,13 @@ async function refreshHR(){
 const DX_MAP={'Такси':'dx-taksi','Амортизация - ремонт - реинвест':'dx-amort','Директор':'dx-director','Бензин':'dx-benzin','Прочее':'dx-prochee'};
 const RESERVE_PCT=0.05;   // резерв на непредвиденное (ремонт оборудования и т.д.) = 5% от оборота
 function dxCalc(){const s=Object.values(DX_MAP).reduce((a,id)=>a+gv(id),0);const e=document.getElementById('dx-sum');if(e)e.textContent=fmt(s);}
+function dxNoteSave(){
+  const date=(document.getElementById('f-date')||{}).value;if(!date)return;
+  const dd=dbGet();if(!dd.procheeNotes)dd.procheeNotes={};
+  const v=(document.getElementById('dx-prochee-note')||{}).value||'';
+  if(v)dd.procheeNotes[date]=v;else delete dd.procheeNotes[date];
+  dbSave(dd);
+}
 async function onFinDate(){
   const date=document.getElementById('f-date').value;const t=today();
   const d=new Date(date+'T00:00:00');
@@ -1678,7 +1679,7 @@ async function onFinDate(){
     const r=await fetch(`${SUPA_URL}/rest/v1/opex?select=category,amount&note=eq.manual&date=eq.${date}`,{headers:authH()});
     (await r.json()||[]).forEach(x=>{const id=DX_MAP[x.category];if(id)sv(id,x.amount||'');});
   }catch(_){}
-  sv('fc-actual',(dbGet().recon||{})[date]||'');reconHint();dxCalc();renderFinHist();
+  sv('fc-actual',(dbGet().recon||{})[date]||'');sv('dx-prochee-note',(dbGet().procheeNotes||{})[date]||'');reconHint();dxCalc();renderFinHist();
 }
 async function finSave(){
   const date=document.getElementById('f-date').value;
@@ -2323,6 +2324,9 @@ function renderDirFinance(){
   setRatio('dk-labor',tR>0?laborPct:null,30,35);
   const mEl=document.getElementById('dk-margin');
   if(mEl){mEl.textContent=tR>0?np+'%':'—';mEl.style.color=tN>=0?'var(--green)':'var(--red)';}
+  const zEl=document.getElementById('dk-zp-sum');if(zEl)zEl.textContent=fmt(laborSum);
+  const oEl=document.getElementById('dk-opex-sum');if(oEl)oEl.textContent=fmt(tO);
+  const fsEl=document.getElementById('dk-food-sum');if(fsEl)fsEl.textContent=fmt(tC);
   renderCompare(tR,tN,tR>0?parseFloat(np):0);
   // Точка безубыточности: оборот, при котором валовая прибыль покрывает OpEx
   const ins=document.getElementById('dk-insight');
@@ -2809,6 +2813,8 @@ function applyDateFilter(){
   _iikoSynced=null; renderDirFinance();
 }
 function todayFilter(){const t=today();document.getElementById('df-from').value=t;document.getElementById('df-to').value=t;applyDateFilter();}
+function weekFilter(){const t=today();const d=new Date(t+'T00:00:00');const f=new Date(d);f.setDate(f.getDate()-6);
+  document.getElementById('df-from').value=f.toISOString().slice(0,10);document.getElementById('df-to').value=t;applyDateFilter();}
 function clearDateFilter(){dirRange=null;_iikoSynced=null;
   const f=document.getElementById('df-from'),t=document.getElementById('df-to');if(f)f.value='';if(t)t.value='';
   renderDirFinance();
