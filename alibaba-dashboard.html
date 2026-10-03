@@ -464,6 +464,11 @@ tr.today td{background:rgba(240,165,0,.04)}
           <div class="role-name">Обзвон</div>
           <div class="role-desc">Звонки клиентам<br>воронка дня</div>
         </div>
+        <div class="role" onclick="goJournal()" style="--rc:#0ea5e9">
+          <span class="role-icon">📒</span>
+          <div class="role-name">Журнал продаж</div>
+          <div class="role-desc">Sotuv jurnali<br>по дням · KPI</div>
+        </div>
       </div>
     </div>
     <div class="rgroup" id="grp-director" style="display:none">
@@ -735,6 +740,74 @@ tr.today td{background:rgba(240,165,0,.04)}
   </div>
 </div>
 <!-- CC:END -->
+<!-- SJ:START экран «Журнал продаж». Заказчик: CEO 03.10.2026 (перенос Excel mijozlar). Код: tech. -->
+<style>
+#journal .sj-wrap{max-width:900px;margin:0 auto;padding:0 10px 90px}
+#journal .sj-date{display:flex;align-items:center;gap:8px;margin:10px 0}
+#journal .sj-date input{flex:1;min-width:0;min-height:42px;border-radius:10px;border:1px solid var(--bd,#e3e3e3);
+  background:var(--c2,#fff);color:inherit;font-size:15px;font-weight:700;padding:6px 10px;text-align:center}
+#journal .sj-nav{flex:0 0 auto;min-width:44px;min-height:42px;border-radius:10px;border:1px solid var(--bd,#e3e3e3);
+  background:var(--c2,#fff);font-size:16px;cursor:pointer;color:inherit}
+#journal .sj-kpi{display:flex;gap:6px;overflow-x:auto;margin:6px 0 10px;padding-bottom:2px}
+#journal .sj-kpi>div{flex:0 0 auto;background:var(--c2,#fff);border:1px solid var(--bd,#e3e3e3);border-radius:9px;
+  padding:6px 10px;font-size:12px;color:var(--t3,#777);white-space:nowrap}
+#journal .sj-kpi b{font-size:15px;color:inherit;margin-left:5px}
+#journal .sj-add{width:100%;min-height:50px;border-radius:12px;border:none;background:#0ea5e9;color:#fff;
+  font-size:15px;font-weight:700;cursor:pointer;margin:4px 0 12px}
+#journal .sj-card{background:var(--c2,#fff);border:1px solid var(--bd,#e3e3e3);border-radius:14px;
+  padding:12px 14px;margin-bottom:10px;cursor:pointer}
+#journal .sj-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+#journal .sj-name{font-size:15.5px;font-weight:700;line-height:1.25}
+#journal .sj-meta{font-size:12.5px;color:var(--t3,#777);margin-top:3px;line-height:1.45}
+#journal .sj-tag{flex:0 0 auto;font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;color:#fff;background:#6b7280}
+#journal .sj-tag.instagram{background:#db2777}#journal .sj-tag.target{background:#7c3aed}
+#journal .sj-tag.eski_mijoz{background:#16a34a}#journal .sj-tag.telegram{background:#2563eb}
+#journal .sj-sold{color:#16a34a;font-weight:700}
+#journal .sj-churn{color:#dc2626}
+#journal .sj-week{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:14px}
+#journal .sj-week th,#journal .sj-week td{padding:6px 8px;border-bottom:1px solid var(--bd,#e3e3e3);text-align:right}
+#journal .sj-week th:first-child,#journal .sj-week td:first-child{text-align:left}
+#journal .sj-week tr.cur td{font-weight:700;color:#0ea5e9}
+#journal .sj-modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:flex-end;
+  justify-content:center;z-index:99}
+#journal .sj-modal.on{display:flex}
+#journal .sj-sheet{background:var(--c2,#fff);width:100%;max-width:560px;border-radius:16px 16px 0 0;
+  padding:18px 16px 26px;max-height:92vh;overflow:auto}
+#journal .sj-sheet h3{margin:0 0 12px;font-size:16px}
+#journal .sj-in,#journal .sj-sel{width:100%;min-height:46px;border-radius:11px;border:1px solid var(--bd,#e3e3e3);
+  padding:10px 12px;font-size:15px;margin-bottom:8px;background:transparent;color:inherit;box-sizing:border-box}
+#journal .sj-row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#journal .sj-lbl{font-size:11.5px;color:var(--t3,#777);margin:2px 0 3px}
+#journal .sj-btn{width:100%;min-height:48px;border-radius:11px;border:none;font-size:15px;font-weight:700;
+  cursor:pointer;color:#fff;background:#0ea5e9;margin-top:4px}
+#journal .sj-btn.del{background:transparent;color:#dc2626;border:1px solid #dc2626;margin-top:8px}
+#journal .sj-btn.cancel{background:transparent;color:inherit;opacity:.7;border:1px solid var(--bd,#e3e3e3);margin-top:8px}
+</style>
+<div id="journal" class="screen">
+  <div class="hdr">
+    <div class="hdr-brand"><span class="brand-mark"></span>Ali Baba</div>
+    <div class="hdr-chip chip-blue">Журнал продаж</div>
+    <div class="sep"></div>
+    <button class="hbtn" onclick="sjLoad()">⟲ Обновить</button>
+    <button class="hbtn" onclick="goLanding()">← Выход</button>
+  </div>
+  <div class="sj-wrap">
+    <div class="sj-date">
+      <button class="sj-nav" onclick="sjShift(-1)">◀</button>
+      <input type="date" id="sj-date" onchange="sjSetDate(this.value)">
+      <button class="sj-nav" onclick="sjShift(1)">▶</button>
+      <button class="sj-nav" style="font-size:13px;font-weight:700;padding:0 10px" onclick="sjSetDate(sjToday())">Bugun</button>
+    </div>
+    <div class="sj-kpi" id="sj-kpi"></div>
+    <button class="sj-add" onclick="sjEdit(null)">＋ Yangi qator / Новая строка</button>
+    <div id="sj-list"></div>
+    <table class="sj-week" id="sj-week"></table>
+  </div>
+  <div class="sj-modal" id="sj-modal" onclick="if(event.target===this)sjClose()">
+    <div class="sj-sheet" id="sj-sheet"></div>
+  </div>
+</div>
+<!-- SJ:END -->
 <div id="login" class="screen">
   <div class="lbox">
     <div class="licon">🔐</div>
@@ -2998,6 +3071,134 @@ async function ccSave(reason,callbackAt,amount){
   ccLoad();
 }
 /* CC:JS:END */
+
+/* SJ:JS:START Журнал продаж. Источник правды — Supabase mkt_journal; дата = лист (как в Excel CEO). */
+let SJ_DATE=null, SJ_ROWS=[], SJ_WEEK=[], SJ_CUR=null;
+// Источники — как в колонке «buyurtma» Excel продажника: instagramdan / targetdan / eski mijoz.
+const SJ_SOURCES=[
+  {k:'instagram', uz:'Instagram'},
+  {k:'target',    uz:'Target (reklama)'},
+  {k:'eski_mijoz',uz:'Eski mijoz / старый клиент'},
+  {k:'telegram',  uz:'Telegram'},
+  {k:'boshqa',    uz:'Boshqa / другое'}
+];
+function sjYmd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function sjToday(){return sjYmd(new Date())}
+function goJournal(){
+  const bb=document.getElementById('backup-banner');if(bb)bb.style.display='none';
+  if(!SJ_DATE)SJ_DATE=sjToday();
+  show('journal');sjLoad();
+}
+function sjSetDate(v){if(!v)return;SJ_DATE=v;sjLoad()}
+function sjShift(n){const d=new Date(SJ_DATE+'T12:00:00');d.setDate(d.getDate()+n);SJ_DATE=sjYmd(d);sjLoad()}
+function sjEsc(s){return String(s==null?'':s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+function sjFmt(n){return (+n||0).toLocaleString('ru-RU')}
+const sjMust=async p=>{const r=await p;if(!r.ok)throw new Error('HTTP '+r.status+' '+(await r.text()).slice(0,160));return r};
+
+async function sjLoad(){
+  const inp=document.getElementById('sj-date');if(inp)inp.value=SJ_DATE;
+  const box=document.getElementById('sj-list');if(box)box.innerHTML='<div class="empty">Загрузка…</div>';
+  try{
+    for(let i=0;i<20 && !(typeof AB_SESS!=='undefined' && AB_SESS && AB_SESS.access_token);i++){await new Promise(r=>setTimeout(r,200));}
+    if(typeof authEnsure==='function')await authEnsure();
+    const r=await sjMust(fetch(`${SUPA_URL}/rest/v1/mkt_journal?select=*&date=eq.${SJ_DATE}&order=created_at.asc`,{headers:authH()}));
+    SJ_ROWS=await r.json();if(!Array.isArray(SJ_ROWS))SJ_ROWS=[];
+    // 14 дней до выбранной даты — таблица «по дням» под списком.
+    const d=new Date(SJ_DATE+'T12:00:00');d.setDate(d.getDate()-13);
+    const rw=await sjMust(fetch(`${SUPA_URL}/rest/v1/mkt_journal?select=date,portions,amount,churn_reason&date=gte.${sjYmd(d)}&date=lte.${SJ_DATE}`,{headers:authH()}));
+    SJ_WEEK=await rw.json();if(!Array.isArray(SJ_WEEK))SJ_WEEK=[];
+  }catch(e){
+    if(box)box.innerHTML='<div class="empty">Не удалось загрузить ('+sjEsc((e&&e.message)||e)+'). Нажмите «Обновить».</div>';
+    return;
+  }
+  sjRender();
+}
+
+function sjStats(rows){
+  const sold=rows.filter(x=>(+x.portions||0)>0||(+x.amount||0)>0);
+  return {n:rows.length,sold:sold.length,
+    portions:rows.reduce((a,x)=>a+(+x.portions||0),0),amount:rows.reduce((a,x)=>a+(+x.amount||0),0),
+    churn:rows.filter(x=>x.churn_reason).length};
+}
+
+function sjRender(){
+  const s=sjStats(SJ_ROWS), kpi=document.getElementById('sj-kpi');
+  const bySrc=SJ_SOURCES.map(o=>[o.uz.split(' ')[0],SJ_ROWS.filter(x=>x.source===o.k).length]).filter(x=>x[1]);
+  if(kpi)kpi.innerHTML=[['Kontakt',s.n],['Sotuv',s.sold],['Ovqat',s.portions],['Summa',sjFmt(s.amount)],['Ketdi',s.churn]]
+    .concat(bySrc).map(([t,v])=>`<div>${t}<b>${v}</b></div>`).join('');
+  const box=document.getElementById('sj-list');
+  if(box){
+    if(!SJ_ROWS.length)box.innerHTML='<div class="empty">На эту дату записей нет. Нажмите «Новая строка».</div>';
+    else box.innerHTML=SJ_ROWS.map(x=>{
+      const src=SJ_SOURCES.find(o=>o.k===x.source);
+      const sold=(+x.portions||0)>0||(+x.amount||0)>0;
+      const soldTxt=sold?' <span class="sj-sold">· 💰 '+(x.portions?x.portions+' ta ovqat':'')+(x.amount?' '+sjFmt(x.amount)+' сум':'')+'</span>':'';
+      return `<div class="sj-card" onclick="sjEdit('${x.id}')">
+        <div class="sj-top"><div>
+          <div class="sj-name">${sjEsc(x.name||'—')}${x.company?' · '+sjEsc(x.company):''}</div>
+          <div class="sj-meta">${sjEsc(x.phone||'')}${soldTxt}
+          ${x.comment?'<br>'+sjEsc(x.comment):''}${x.churn_reason?'<br><span class="sj-churn">⛔ '+sjEsc(x.churn_reason)+'</span>':''}</div>
+        </div><span class="sj-tag ${sjEsc(x.source||'')}">${src?sjEsc(src.uz.split(' ')[0]):'—'}</span></div>
+      </div>`}).join('');
+  }
+  const days={};SJ_WEEK.forEach(x=>{(days[x.date]=days[x.date]||[]).push(x)});
+  const keys=Object.keys(days).sort().reverse(), tbl=document.getElementById('sj-week');
+  if(tbl)tbl.innerHTML=`<tr><th>Kun</th><th>Kontakt</th><th>Sotuv</th><th>Ovqat</th><th>Summa</th><th>Ketdi</th></tr>`+
+    (keys.length?keys.map(k=>{const t=sjStats(days[k]);
+      return `<tr class="${k===SJ_DATE?'cur':''}" onclick="sjSetDate('${k}')" style="cursor:pointer"><td>${k.slice(8,10)}.${k.slice(5,7)}</td><td>${t.n}</td><td>${t.sold}</td><td>${t.portions}</td><td>${sjFmt(t.amount)}</td><td>${t.churn}</td></tr>`}).join('')
+     :'<tr><td colspan="6" style="text-align:center;color:var(--t3,#777)">за 14 дней записей нет</td></tr>');
+}
+
+function sjEdit(id){
+  const x=id?(SJ_ROWS.find(r=>r.id===id)||{}):{};SJ_CUR=id;
+  const opts=SJ_SOURCES.map(o=>`<option value="${o.k}" ${x.source===o.k?'selected':''}>${o.uz}</option>`).join('');
+  document.getElementById('sj-sheet').innerHTML=`<h3>${id?'Tahrirlash / Правка':'Yangi qator / Новая строка'} · ${SJ_DATE}</h3>
+    <div class="sj-lbl">F.I.SH / имя *</div><input class="sj-in" id="sj-name" value="${sjEsc(x.name||'')}" placeholder="Mijoz ismi">
+    <div class="sj-row2">
+      <div><div class="sj-lbl">Nomer / телефон</div><input class="sj-in" id="sj-phone" inputmode="tel" value="${sjEsc(x.phone||'')}" placeholder="90 123 45 67"></div>
+      <div><div class="sj-lbl">Kompaniya</div><input class="sj-in" id="sj-company" value="${sjEsc(x.company||'')}"></div>
+    </div>
+    <div class="sj-lbl">Qayerdan / источник</div><select class="sj-sel" id="sj-source"><option value="">—</option>${opts}</select>
+    <div class="sj-row2">
+      <div><div class="sj-lbl">Ovqat soni / порций продано</div><input class="sj-in" id="sj-portions" type="number" inputmode="numeric" min="0" value="${x.portions==null?'':x.portions}" placeholder="0"></div>
+      <div><div class="sj-lbl">Summa, so'm (agar ma'lum)</div><input class="sj-in" id="sj-amount" type="number" inputmode="numeric" min="0" step="1000" value="${x.amount==null?'':x.amount}" placeholder="0"></div>
+    </div>
+    <div class="sj-lbl">Komentariya / что было</div><input class="sj-in" id="sj-comment" value="${sjEsc(x.comment||'')}" placeholder="10 ta ovqat sotildi…">
+    <div class="sj-lbl">Nega hamkorlikni tugatgan (agar ketgan bo'lsa)</div><input class="sj-in" id="sj-churn" value="${sjEsc(x.churn_reason||'')}" placeholder="bo'sh = hamkorlik davom etmoqda">
+    <button class="sj-btn" onclick="sjSave()">Saqlash / Сохранить</button>
+    ${id?'<button class="sj-btn del" onclick="sjDelete()">O\'chirish / Удалить</button>':''}
+    <button class="sj-btn cancel" onclick="sjClose()">Bekor / Отмена</button>`;
+  document.getElementById('sj-modal').classList.add('on');
+  setTimeout(()=>{const n=document.getElementById('sj-name');if(n&&!id)n.focus()},50);
+}
+function sjClose(){document.getElementById('sj-modal').classList.remove('on');SJ_CUR=null}
+const sjV=id=>{const e=document.getElementById(id);return e?e.value.trim():''};
+
+async function sjSave(){
+  const name=sjV('sj-name');if(!name){alert('Ismni kiriting / укажите имя');return}
+  const num=v=>v===''?null:Math.max(0,Math.round(+v||0));
+  const body={date:SJ_DATE,name,phone:sjV('sj-phone')||null,company:sjV('sj-company')||null,source:sjV('sj-source')||null,
+    portions:num(sjV('sj-portions')),amount:num(sjV('sj-amount')),comment:sjV('sj-comment')||null,
+    churn_reason:sjV('sj-churn')||null,operator:(AB_SESS&&AB_SESS.email)||null};
+  const id=SJ_CUR;sjClose();
+  try{
+    if(typeof authEnsure==='function')await authEnsure();
+    const h=Object.assign({'Content-Type':'application/json','Prefer':'return=minimal'},authH());
+    // Не-2xx = ошибка на экране, а не тихий пропуск: по этим строкам считается KPI.
+    await sjMust(id?fetch(`${SUPA_URL}/rest/v1/mkt_journal?id=eq.${id}`,{method:'PATCH',headers:h,body:JSON.stringify(body)})
+                   :fetch(`${SUPA_URL}/rest/v1/mkt_journal`,{method:'POST',headers:h,body:JSON.stringify(body)}));
+  }catch(e){alert('Не сохранилось: '+((e&&e.message)||e)+'\nПроверьте интернет и повторите.');return}
+  sjLoad();
+}
+async function sjDelete(){
+  const id=SJ_CUR;if(!id||!confirm("O'chirilsinmi? / Удалить строку?"))return;sjClose();
+  try{
+    if(typeof authEnsure==='function')await authEnsure();
+    await sjMust(fetch(`${SUPA_URL}/rest/v1/mkt_journal?id=eq.${id}`,{method:'DELETE',headers:authH()}));
+  }catch(e){alert('Не удалилось: '+((e&&e.message)||e));return}
+  sjLoad();
+}
+/* SJ:JS:END */
 </script>
 </body>
 </html>
