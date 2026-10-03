@@ -574,19 +574,77 @@ tr.today td{background:rgba(240,165,0,.04)}
     </div>
     <!-- CLIENTS -->
     <div id="mkt-clients">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-        <div>
-          <span style="font-size:15px;font-weight:800">База клиентов</span>
-          <span id="mkt-client-cnt" style="color:var(--t2);font-size:12px;margin-left:10px"></span>
-        </div>
-        <button class="add-btn" onclick="openClientModal()">+ Добавить клиента</button>
+      <!-- CRM:START Клиенты (CRM продажника). Заказчик: CEO 03.10.2026. Код: tech. -->
+      <style>
+      #mkt-clients .crm-top{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+      #mkt-clients .crm-op{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--bdr);border-radius:10px;padding:6px 10px;font-size:12.5px}
+      #mkt-clients .crm-op input{border:none;background:transparent;color:inherit;font-weight:700;font-size:13px;width:140px;outline:none}
+      #mkt-clients .crm-date{display:flex;align-items:center;gap:4px;margin-left:auto}
+      #mkt-clients .crm-date button,#mkt-clients .crm-date input{min-height:34px;border-radius:9px;border:1px solid var(--bdr);background:var(--card);color:inherit;font-size:13px;font-weight:700;padding:0 8px}
+      #mkt-clients .crm-kpi{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:8px}
+      #mkt-clients .crm-kpi>div{flex:0 0 auto;background:var(--card);border:1px solid var(--bdr);border-radius:9px;padding:6px 10px;font-size:12px;color:var(--t2);white-space:nowrap}
+      #mkt-clients .crm-kpi b{font-size:15px;color:var(--t1);margin-left:5px}
+      #mkt-clients .crm-kpi .due b{color:#dc2626}
+      #mkt-clients .crm-f{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+      #mkt-clients .crm-chip{padding:7px 11px;border-radius:999px;border:1px solid var(--bdr);background:var(--card);font-size:12.5px;font-weight:600;cursor:pointer;color:inherit}
+      #mkt-clients .crm-chip.on{background:#2563eb;color:#fff;border-color:#2563eb}
+      #mkt-clients .crm-search{width:100%;min-height:42px;border-radius:10px;border:1px solid var(--bdr);background:var(--card);color:inherit;padding:8px 12px;font-size:14px;margin:6px 0;box-sizing:border-box}
+      #mkt-clients .crm-add{width:100%;min-height:46px;border-radius:12px;border:none;background:#2563eb;color:#fff;font-size:15px;font-weight:700;cursor:pointer;margin:4px 0 12px}
+      #mkt-clients .crm-card{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:12px 14px;margin-bottom:10px;cursor:pointer}
+      #mkt-clients .crm-card.due{border-color:#dc2626}
+      #mkt-clients .crm-row{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+      #mkt-clients .crm-name{font-size:15.5px;font-weight:700;line-height:1.25}
+      #mkt-clients .crm-meta{font-size:12.5px;color:var(--t2);margin-top:3px;line-height:1.45}
+      #mkt-clients .crm-tags{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;flex:0 0 auto;max-width:46%}
+      #mkt-clients .tg{font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;color:#fff;background:#6b7280;white-space:nowrap}
+      #mkt-clients .tg.new{background:#6b7280}#mkt-clients .tg.called{background:#0ea5e9}#mkt-clients .tg.interested{background:#f59e0b}
+      #mkt-clients .tg.trial{background:#7c3aed}#mkt-clients .tg.client{background:#16a34a}#mkt-clients .tg.lost{background:#dc2626}
+      #mkt-clients .tg.corporate{background:#1f2937}#mkt-clients .tg.individual{background:#9ca3af}
+      #mkt-clients .crm-tel{color:#16a34a;font-weight:700;text-decoration:none}
+      .crm-modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:flex-end;justify-content:center;z-index:99}
+      .crm-modal.on{display:flex}
+      .crm-sheet{background:var(--card,#fff);color:var(--t1,#111);width:100%;max-width:600px;border-radius:16px 16px 0 0;padding:16px 16px 28px;max-height:92vh;overflow:auto}
+      .crm-sheet h3{margin:0 0 10px;font-size:16px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+      .crm-sheet .x{border:none;background:transparent;font-size:22px;cursor:pointer;color:inherit}
+      .crm-in,.crm-sel{width:100%;min-height:44px;border-radius:10px;border:1px solid var(--bdr,#ddd);padding:9px 11px;font-size:14.5px;margin-bottom:7px;background:transparent;color:inherit;box-sizing:border-box}
+      .crm-2{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+      .crm-lbl{font-size:11px;color:var(--t2,#777);margin:2px 0 3px;text-transform:uppercase;letter-spacing:.5px}
+      .crm-btn{width:100%;min-height:46px;border-radius:11px;border:none;font-size:15px;font-weight:700;cursor:pointer;color:#fff;background:#2563eb;margin-top:4px}
+      .crm-btn.sec{background:transparent;color:inherit;border:1px solid var(--bdr,#ddd)}
+      .crm-btn.ok{background:#16a34a}
+      .crm-feed{margin:10px 0 6px;border-top:1px solid var(--bdr,#eee);padding-top:8px}
+      .crm-ev{display:flex;gap:8px;padding:7px 0;border-bottom:1px dashed var(--bdr,#eee);font-size:13px}
+      .crm-ev .ic{flex:0 0 22px;font-size:16px}
+      .crm-ev .t{color:var(--t2,#777);font-size:11.5px}
+      .crm-quick{background:var(--bg2,#f6f6f6);border-radius:12px;padding:10px;margin-top:8px}
+      </style>
+      <div class="crm-top">
+        <div class="crm-op">👤 <span style="color:var(--t2)">Кто работает:</span><input id="crm-op" list="crm-ops" placeholder="имя" onchange="crmSetOp(this.value)"><datalist id="crm-ops"></datalist></div>
+        <div class="crm-date"><button onclick="crmShift(-1)">◀</button><input type="date" id="crm-date" onchange="crmSetDate(this.value)"><button onclick="crmShift(1)">▶</button><button onclick="crmSetDate(crmToday())">Сегодня</button></div>
       </div>
-      <div class="kpi-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px">
-        <div class="kpi cnt"><div class="kpi-lbl">Всего клиентов</div><div class="kpi-val" id="mk-total">0</div></div>
-        <div class="kpi gross"><div class="kpi-lbl">Активных</div><div class="kpi-val" id="mk-active">0</div></div>
-        <div class="kpi net"><div class="kpi-lbl">Порций в день</div><div class="kpi-val" id="mk-portions">0</div></div>
+      <div class="crm-kpi" id="crm-kpi"></div>
+      <div class="crm-f" id="crm-ftype">
+        <button class="crm-chip on" onclick="crmFilter('type','all',this)">Все</button>
+        <button class="crm-chip" onclick="crmFilter('type','corporate',this)">🏢 Корп</button>
+        <button class="crm-chip" onclick="crmFilter('type','individual',this)">👤 Частные</button>
+        <button class="crm-chip" onclick="crmFilter('type','due',this)">🔔 К перезвону</button>
+        <button class="crm-chip" onclick="crmFilter('type','mine',this)">🙋 Мои</button>
       </div>
-      <div class="client-grid" id="client-grid"></div>
+      <div class="crm-f" id="crm-fstat">
+        <button class="crm-chip on" onclick="crmFilter('status','all',this)">Все статусы</button>
+        <button class="crm-chip" onclick="crmFilter('status','new',this)">🆕 Новые</button>
+        <button class="crm-chip" onclick="crmFilter('status','called',this)">📞 Позвонили</button>
+        <button class="crm-chip" onclick="crmFilter('status','interested',this)">👍 Заинтересованы</button>
+        <button class="crm-chip" onclick="crmFilter('status','trial',this)">🧪 Пробный</button>
+        <button class="crm-chip" onclick="crmFilter('status','client',this)">✅ Клиенты</button>
+        <button class="crm-chip" onclick="crmFilter('status','lost',this)">❌ Потеряны</button>
+      </div>
+      <input class="crm-search" id="crm-q" placeholder="🔍 имя, компания, телефон" oninput="crmRender()">
+      <button class="crm-add" onclick="crmEdit(null)">＋ Новый клиент</button>
+      <div id="crm-list"></div>
+      <div class="crm-modal" id="crm-modal" onclick="if(event.target===this)crmClose()"><div class="crm-sheet" id="crm-sheet"></div></div>
+      <!-- CRM:END -->
+
     </div>
     <!-- ORDER CUSTOMERS — клиенты из заказов витрины (авто из mkt_leads) -->
     <div id="mkt-orders" style="display:none">
@@ -1448,7 +1506,7 @@ function saveRecon(date){
   if(av>0)dd.recon[date]=av;else delete dd.recon[date];dbSave(dd);
 }
 function goHR(){renderHR();show('hr');loadHR();}
-function goMkt(){renderClients();loadMktIiko();show('mkt')}
+function goMkt(){crmLoad();loadMktIiko();show('mkt')}
 function goLogin(){const e=document.getElementById('au-email');if(e)e.value='director@alibaba.uz';const p=document.getElementById('au-pass');if(p){p.value='';setTimeout(()=>p.focus(),50)}const er=document.getElementById('lerr');if(er)er.style.display='none';show('login')}
 function goDir(){show('dir');dirRender()}
 
@@ -1934,6 +1992,7 @@ function mktTab(tab,btn){
   document.getElementById('mkt-clients').style.display=tab==='clients'?'':'none';
   document.getElementById('mkt-orders').style.display=tab==='orders'?'':'none';
   if(tab==='orders')renderOrderLeads();
+  if(tab==='clients')crmLoad();
 }
 var _ocFilter='all';
 async function renderOrderLeads(){
@@ -1967,6 +2026,7 @@ async function renderOrderLeads(){
   }).join('');
 }
 function renderClients(){
+  if(!document.getElementById('client-grid'))return;   // 03.10: вкладка Клиенты = CRM (Supabase)
   const all=cliAll();
   const active=all.filter(c=>c.status==='active');
   const portions=active.reduce((s,c)=>s+(c.portions||0),0);
@@ -3159,6 +3219,187 @@ async function sjDelete(){
   sjLoad();
 }
 /* SJ:JS:END */
+
+/* CRM:JS:START Клиенты — Supabase crm_clients/crm_activities. Один инструмент продажника (CEO 03.10.2026). */
+let CRM_C=[], CRM_ACT=[], CRM_DATE=null, CRM_TYPE='all', CRM_STAT='all', CRM_CUR=null, CRM_OPS=[];
+const CRM_ST={new:['🆕','Новый'],called:['📞','Позвонили'],interested:['👍','Заинтересован'],trial:['🧪','Пробный заказ'],client:['✅','Клиент'],lost:['❌','Потерян']};
+const CRM_TY={corporate:['🏢','Корп'],individual:['👤','Частный']};
+const CRM_SRC={base:'База B2B',call:'Звонок',web:'Сайт',instagram:'Instagram',target:'Target',repeat:'Старый клиент',telegram:'Telegram',manual:'Вручную',other:'Другое'};
+const CRM_OUT={no_answer:['📵','Не взял'],talked:['💬','Поговорили'],interested:['👍','Заинтересован'],trial_booked:['🧪','Договорились о пробном'],rejected:['❌','Отказ'],order:['💰','Заказ'],web_paid:['🌐','Заказ на сайте (оплачен)'],web_new:['🌐','Заказ на сайте'],web_invoice:['🌐','Заказ на сайте (счёт)'],web_refunded:['↩️','Возврат']};
+function crmEsc(s){return String(s==null?'':s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+function crmYmd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function crmToday(){return crmYmd(new Date())}
+function crmFmt(n){return (+n||0).toLocaleString('ru-RU')}
+function crmOp(){try{return localStorage.getItem('crm_op')||''}catch(_){return ''}}
+function crmSetOp(v){try{localStorage.setItem('crm_op',(v||'').trim())}catch(_){}crmRender()}
+function crmSetDate(v){if(!v)return;CRM_DATE=v;crmLoad()}
+function crmShift(n){const d=new Date((CRM_DATE||crmToday())+'T12:00:00');d.setDate(d.getDate()+n);CRM_DATE=crmYmd(d);crmLoad()}
+const crmMust=async p=>{const r=await p;if(!r.ok)throw new Error('HTTP '+r.status+' '+(await r.text()).slice(0,160));return r};
+function crmH(extra){return Object.assign({'Content-Type':'application/json'},authH(),extra||{})}
+
+async function crmLoad(){
+  if(!CRM_DATE)CRM_DATE=crmToday();
+  const di=document.getElementById('crm-date');if(di)di.value=CRM_DATE;
+  const oi=document.getElementById('crm-op');if(oi&&!oi.value)oi.value=crmOp();
+  const box=document.getElementById('crm-list');if(box&&!CRM_C.length)box.innerHTML='<div class="empty">Загрузка…</div>';
+  try{
+    for(let i=0;i<20&&!(typeof AB_SESS!=='undefined'&&AB_SESS&&AB_SESS.access_token);i++){await new Promise(r=>setTimeout(r,200));}
+    if(typeof authEnsure==='function')await authEnsure();
+    const r=await crmMust(fetch(`${SUPA_URL}/rest/v1/crm_clients?select=*&order=callback_at.asc.nullslast,last_activity_at.desc.nullslast&limit=1000`,{headers:authH()}));
+    CRM_C=await r.json();if(!Array.isArray(CRM_C))CRM_C=[];
+    const ra=await crmMust(fetch(`${SUPA_URL}/rest/v1/crm_activities?select=type,outcome,amount,portions,operator,client_id&date=eq.${CRM_DATE}`,{headers:authH()}));
+    CRM_ACT=await ra.json();if(!Array.isArray(CRM_ACT))CRM_ACT=[];
+    const ro=await fetch(`${SUPA_URL}/rest/v1/crm_activities?select=operator&operator=not.is.null&source=eq.manual&order=created_at.desc&limit=300`,{headers:authH()});
+    const ops=await ro.json().catch(()=>[]);CRM_OPS=[...new Set((Array.isArray(ops)?ops:[]).map(x=>x.operator).filter(Boolean))];
+    const dl=document.getElementById('crm-ops');if(dl)dl.innerHTML=CRM_OPS.map(o=>`<option value="${crmEsc(o)}">`).join('');
+  }catch(e){if(box)box.innerHTML='<div class="empty">Не удалось загрузить ('+crmEsc((e&&e.message)||e)+'). Нажмите «Обновить» вверху.</div>';return}
+  crmRender();
+}
+function crmFilter(kind,val,btn){btn.parentElement.querySelectorAll('.crm-chip').forEach(b=>b.classList.remove('on'));btn.classList.add('on');if(kind==='type')CRM_TYPE=val;else CRM_STAT=val;crmRender()}
+function crmDue(c){return c.callback_at&&c.callback_at<=CRM_DATE&&c.status!=='lost'}
+function crmRender(){
+  const op=crmOp(), mine=CRM_ACT.filter(a=>!op||a.operator===op);
+  const cnt=(f)=>mine.filter(f).length;
+  const sum=mine.filter(a=>a.type==='order').reduce((s,a)=>s+(+a.amount||0),0);
+  const due=CRM_C.filter(crmDue).length;
+  const k=document.getElementById('crm-kpi');
+  if(k)k.innerHTML=[['Звонков',cnt(a=>a.type==='call')],['👍',cnt(a=>a.type==='call'&&a.outcome==='interested')],['🧪',cnt(a=>a.type==='trial'||a.outcome==='trial_booked')],
+    ['💰 заказов',cnt(a=>a.type==='order')],['сум',crmFmt(sum)],['❌',cnt(a=>a.outcome==='rejected')]].map(([t,v])=>`<div>${t}<b>${v}</b></div>`).join('')
+    +`<div class="due">🔔 перезвонить<b>${due}</b></div>`+(op?`<div>👤<b>${crmEsc(op)}</b></div>`:'');
+  const q=((document.getElementById('crm-q')||{}).value||'').toLowerCase().trim();
+  const list=CRM_C.filter(c=>{
+    if(CRM_TYPE==='due'&&!crmDue(c))return false;
+    if(CRM_TYPE==='mine'&&(c.assigned_to||'')!==op)return false;
+    if((CRM_TYPE==='corporate'||CRM_TYPE==='individual')&&c.type!==CRM_TYPE)return false;
+    if(CRM_STAT!=='all'&&c.status!==CRM_STAT)return false;
+    if(q){const h=[c.company,c.contact_name,c.phone,c.district,c.note].join(' ').toLowerCase();if(!h.includes(q))return false}
+    return true;
+  });
+  const box=document.getElementById('crm-list');if(!box)return;
+  if(!list.length){box.innerHTML='<div class="empty">Пусто в этом фильтре.</div>';return}
+  box.innerHTML=list.slice(0,300).map(c=>{
+    const name=c.company||c.contact_name||'—', sub=[c.company?c.contact_name:null,c.district].filter(Boolean).join(' · ');
+    const tel=(c.phone||'').trim(), digits=tel.replace(/\D/g,''), draft=/x{2,}|уточн|\?{2,}/i.test(tel);
+    const dial=tel?((!draft&&digits.length>=9)?`<a class="crm-tel" href="tel:${tel.startsWith('+')?'+':''}${digits}" onclick="event.stopPropagation()">📞 ${crmEsc(tel)}</a>`:'☎ '+crmEsc(tel)):'';
+    const last=c.last_activity_at?new Date(c.last_activity_at).toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit'}):'';
+    const st=CRM_ST[c.status]||['',c.status], ty=CRM_TY[c.type]||['',c.type];
+    return `<div class="crm-card${crmDue(c)?' due':''}" onclick="crmOpen('${c.id}')">
+      <div class="crm-row"><div><div class="crm-name">${crmEsc(name)}</div>
+        <div class="crm-meta">${crmEsc(sub)}${sub&&dial?' · ':''}${dial}${c.orders_count?'<br>💰 заказов '+c.orders_count+' · '+crmFmt(c.total_spent)+' сум':''}
+        ${c.callback_at?'<br>🔔 перезвонить <b'+(crmDue(c)?' style="color:#dc2626"':'')+'>'+crmEsc(c.callback_at)+'</b>':''}${last?' · посл. '+last:''}${c.assigned_to?' · 👤 '+crmEsc(c.assigned_to):''}</div></div>
+        <div class="crm-tags"><span class="tg ${c.status}">${st[0]} ${st[1]}</span><span class="tg ${c.type}">${ty[0]} ${ty[1]}</span></div></div></div>`}).join('')
+    +(list.length>300?'<div class="empty">Показаны первые 300 — уточните поиск.</div>':'');
+}
+function crmClose(){document.getElementById('crm-modal').classList.remove('on');CRM_CUR=null}
+function crmSheet(html){document.getElementById('crm-sheet').innerHTML=html;document.getElementById('crm-modal').classList.add('on')}
+const crmV=id=>{const e=document.getElementById(id);return e?String(e.value||'').trim():''};
+function crmSelOpts(map,cur){return Object.entries(map).map(([k,v])=>`<option value="${k}" ${k===cur?'selected':''}>${Array.isArray(v)?v[0]+' '+v[1]:v}</option>`).join('')}
+
+async function crmOpen(id){
+  const c=CRM_C.find(x=>x.id===id);if(!c)return;CRM_CUR=c;
+  crmSheet(`<h3>${crmEsc(c.company||c.contact_name||'Клиент')}<button class="x" onclick="crmClose()">×</button></h3><div class="empty">Загрузка ленты…</div>`);
+  let feed=[];
+  try{const r=await crmMust(fetch(`${SUPA_URL}/rest/v1/crm_activities?client_id=eq.${id}&select=*&order=created_at.desc&limit=100`,{headers:authH()}));feed=await r.json()}catch(e){feed=[]}
+  if(!CRM_CUR||CRM_CUR.id!==id)return;
+  const st=CRM_ST[c.status]||['',c.status];
+  const feedHtml=feed.length?feed.map(a=>{const o=CRM_OUT[a.outcome]||(a.type==='order'?['💰','Заказ']:a.type==='trial'?['🧪','Пробный']:a.type==='note'?['📝','Заметка']:a.type==='status'?['🔁','Статус']:['📞','Звонок']);
+      return `<div class="crm-ev"><div class="ic">${o[0]}</div><div><div><b>${o[1]}</b>${a.amount?' · '+crmFmt(a.amount)+' сум':''}${a.portions?' · '+a.portions+' порц.':''}${a.callback_at?' · 🔔 '+crmEsc(a.callback_at):''}</div>
+        ${a.comment?'<div>'+crmEsc(a.comment)+'</div>':''}<div class="t">${crmEsc(a.date)}${a.operator?' · '+crmEsc(a.operator):''}</div></div></div>`}).join(''):'<div class="empty">Событий пока нет.</div>';
+  crmSheet(`<h3><span>${crmEsc(c.company||c.contact_name||'Клиент')} <span class="tg ${c.status}" style="font-size:11px;padding:3px 8px;border-radius:999px;color:#fff;background:#6b7280">${st[0]} ${st[1]}</span></span><button class="x" onclick="crmClose()">×</button></h3>
+    <div class="crm-meta" style="font-size:13px;color:var(--t2)">${crmEsc([c.contact_name&&c.company?c.contact_name:null,c.phone,c.district,CRM_SRC[c.source]||c.source].filter(Boolean).join(' · '))}
+      ${c.orders_count?'<br>💰 заказов '+c.orders_count+' · '+crmFmt(c.total_spent)+' сум':''}${c.portions_per_day?' · '+c.portions_per_day+' порц/день':''}${c.note?'<br>📝 '+crmEsc(c.note):''}${c.lost_reason?'<br>❌ '+crmEsc(c.lost_reason):''}</div>
+    <div class="crm-quick" id="crm-quick">
+      <div class="crm-lbl">＋ Добавить контакт</div>
+      <div class="crm-2"><select class="crm-sel" id="crm-a-type" onchange="crmQuickUi()"><option value="call">📞 Звонок</option><option value="trial">🧪 Пробный заказ</option><option value="order">💰 Заказ</option><option value="note">📝 Заметка</option></select>
+      <select class="crm-sel" id="crm-a-out"><option value="talked">💬 Поговорили</option><option value="interested">👍 Заинтересован</option><option value="trial_booked">🧪 Договорились о пробном</option><option value="no_answer">📵 Не взял</option><option value="rejected">❌ Отказ</option></select></div>
+      <div class="crm-2" id="crm-a-money" style="display:none"><input class="crm-in" id="crm-a-amount" type="number" inputmode="numeric" step="1000" placeholder="сумма, сум"><input class="crm-in" id="crm-a-portions" type="number" inputmode="numeric" placeholder="порций"></div>
+      <div class="crm-2"><input class="crm-in" id="crm-a-cb" type="date" title="перезвонить"><input class="crm-in" id="crm-a-date" type="date" value="${crmToday()}" title="дата события"></div>
+      <input class="crm-in" id="crm-a-comment" placeholder="комментарий (что сказал клиент)">
+      <button class="crm-btn ok" onclick="crmAddActivity()">Сохранить контакт</button>
+    </div>
+    <div class="crm-2" style="margin-top:8px"><button class="crm-btn sec" onclick="crmEdit('${c.id}')">✏️ Карточка</button><button class="crm-btn sec" onclick="crmStatusMenu()">🔁 Статус</button></div>
+    <div class="crm-feed"><div class="crm-lbl">Лента (${feed.length})</div>${feedHtml}</div>`);
+  crmQuickUi();
+}
+function crmQuickUi(){const t=crmV('crm-a-type');const m=document.getElementById('crm-a-money'),o=document.getElementById('crm-a-out');if(m)m.style.display=(t==='order'||t==='trial')?'':'none';if(o)o.style.display=t==='call'?'':'none'}
+function crmNextStatus(cur,type,outcome){
+  if(type==='order')return 'client';
+  if(type==='trial')return cur==='client'?'client':'trial';
+  if(type==='call'){if(outcome==='rejected')return 'lost';if(outcome==='interested')return (cur==='client'||cur==='trial')?cur:'interested';if(outcome==='trial_booked')return cur==='client'?'client':'trial';if(cur==='new')return 'called';}
+  return cur;
+}
+async function crmAddActivity(){
+  const c=CRM_CUR;if(!c)return;
+  const type=crmV('crm-a-type'), outcome=type==='call'?crmV('crm-a-out'):(type==='order'?'order':type==='trial'?'trial_booked':null);
+  const amount=+crmV('crm-a-amount')||null, portions=+crmV('crm-a-portions')||null, cb=crmV('crm-a-cb')||null, comment=crmV('crm-a-comment')||null, date=crmV('crm-a-date')||crmToday();
+  if(type==='order'&&!amount&&!portions){alert('Укажите сумму или порции заказа');return}
+  if(type==='call'&&outcome==='interested'&&!cb){alert('Заинтересован — поставьте дату перезвона');return}
+  const op=crmOp()||((typeof AB_SESS!=='undefined'&&AB_SESS&&AB_SESS.email)||null);
+  if(!op){alert('Укажите «Кто работает» вверху экрана');return}
+  let reason=null;if(type==='call'&&outcome==='rejected'){reason=prompt('Причина отказа:')||null}
+  try{
+    if(typeof authEnsure==='function')await authEnsure();
+    await crmMust(fetch(`${SUPA_URL}/rest/v1/crm_activities`,{method:'POST',headers:crmH({Prefer:'return=minimal'}),body:JSON.stringify({client_id:c.id,date,type,outcome,amount,portions,comment:[comment,reason].filter(Boolean).join(' · ')||null,callback_at:cb,operator:op,source:'manual'})}));
+    const ns=crmNextStatus(c.status,type,outcome);
+    const patch={status:ns,assigned_to:c.assigned_to||op};if(cb)patch.callback_at=cb;if(ns==='lost'&&reason)patch.lost_reason=reason;if(ns!=='lost'&&ns!=='interested'&&ns!=='trial'&&!cb)patch.callback_at=null;
+    await crmMust(fetch(`${SUPA_URL}/rest/v1/crm_clients?id=eq.${c.id}`,{method:'PATCH',headers:crmH({Prefer:'return=minimal'}),body:JSON.stringify(patch)}));
+  }catch(e){alert('Не сохранилось: '+((e&&e.message)||e));return}
+  if(typeof toast==='function')toast('✓ Контакт записан',true);
+  await crmLoad();crmOpen(c.id);
+}
+function crmStatusMenu(){
+  const c=CRM_CUR;if(!c)return;
+  crmSheet(`<h3>Статус: ${crmEsc(c.company||c.contact_name||'')}<button class="x" onclick="crmClose()">×</button></h3>
+    ${Object.entries(CRM_ST).map(([k,v])=>`<button class="crm-btn sec" style="text-align:left" onclick="crmSetStatus('${k}')">${v[0]} ${v[1]}${c.status===k?' ✓':''}</button>`).join('')}
+    <div class="crm-lbl" style="margin-top:8px">Перезвонить (если нужно)</div><input class="crm-in" id="crm-s-cb" type="date" value="${crmEsc(c.callback_at||'')}">`);
+}
+async function crmSetStatus(st){
+  const c=CRM_CUR;if(!c)return;const cb=crmV('crm-s-cb')||null;let reason=null;if(st==='lost')reason=prompt('Причина (ушёл / отказ):')||null;
+  const op=crmOp()||null;
+  try{
+    if(typeof authEnsure==='function')await authEnsure();
+    await crmMust(fetch(`${SUPA_URL}/rest/v1/crm_clients?id=eq.${c.id}`,{method:'PATCH',headers:crmH({Prefer:'return=minimal'}),body:JSON.stringify({status:st,callback_at:cb,lost_reason:st==='lost'?reason:c.lost_reason})}));
+    await crmMust(fetch(`${SUPA_URL}/rest/v1/crm_activities`,{method:'POST',headers:crmH({Prefer:'return=minimal'}),body:JSON.stringify({client_id:c.id,date:crmToday(),type:'status',outcome:st,comment:reason,callback_at:cb,operator:op,source:'manual'})}));
+  }catch(e){alert('Не сохранилось: '+((e&&e.message)||e));return}
+  await crmLoad();crmOpen(c.id);
+}
+function crmEdit(id){
+  const c=id?(CRM_C.find(x=>x.id===id)||{}):{};CRM_CUR=id?c:null;
+  crmSheet(`<h3>${id?'Карточка клиента':'Новый клиент'}<button class="x" onclick="crmClose()">×</button></h3>
+    <div class="crm-2"><div><div class="crm-lbl">Тип</div><select class="crm-sel" id="crm-e-type">${crmSelOpts(CRM_TY,c.type||'corporate')}</select></div>
+    <div><div class="crm-lbl">Статус</div><select class="crm-sel" id="crm-e-status">${crmSelOpts(CRM_ST,c.status||'new')}</select></div></div>
+    <div class="crm-lbl">Компания (для корп)</div><input class="crm-in" id="crm-e-company" value="${crmEsc(c.company||'')}" placeholder="Клиника / БЦ / компания">
+    <div class="crm-lbl">Контакт (имя) *</div><input class="crm-in" id="crm-e-name" value="${crmEsc(c.contact_name||'')}" placeholder="Имя">
+    <div class="crm-2"><div><div class="crm-lbl">Телефон</div><input class="crm-in" id="crm-e-phone" inputmode="tel" value="${crmEsc(c.phone||'')}" placeholder="+998 90 123 45 67"></div>
+    <div><div class="crm-lbl">Район</div><input class="crm-in" id="crm-e-district" value="${crmEsc(c.district||'')}"></div></div>
+    <div class="crm-2"><div><div class="crm-lbl">Откуда</div><select class="crm-sel" id="crm-e-source">${crmSelOpts(CRM_SRC,c.source||'call')}</select></div>
+    <div><div class="crm-lbl">Порций/день (корп)</div><input class="crm-in" id="crm-e-portions" type="number" inputmode="numeric" value="${c.portions_per_day==null?'':c.portions_per_day}"></div></div>
+    <div class="crm-2"><div><div class="crm-lbl">Ведёт</div><input class="crm-in" id="crm-e-assigned" list="crm-ops" value="${crmEsc(c.assigned_to||crmOp()||'')}"></div>
+    <div><div class="crm-lbl">Перезвонить</div><input class="crm-in" id="crm-e-cb" type="date" value="${crmEsc(c.callback_at||'')}"></div></div>
+    <div class="crm-lbl">Заметка</div><input class="crm-in" id="crm-e-note" value="${crmEsc(c.note||'')}">
+    <button class="crm-btn" onclick="crmSaveClient('${id||''}')">Сохранить</button>
+    ${id?'<button class="crm-btn sec" onclick="crmOpen(\''+id+'\')">← К ленте</button><button class="crm-btn sec" style="color:#dc2626" onclick="crmDeleteClient(\''+id+'\')">Удалить клиента</button>':'<button class="crm-btn sec" onclick="crmClose()">Отмена</button>'}`);
+}
+async function crmSaveClient(id){
+  const name=crmV('crm-e-name'), company=crmV('crm-e-company');
+  if(!name&&!company){alert('Укажите имя или компанию');return}
+  const body={type:crmV('crm-e-type'),status:crmV('crm-e-status'),company:company||null,contact_name:name||null,phone:crmV('crm-e-phone')||null,district:crmV('crm-e-district')||null,
+    source:crmV('crm-e-source')||null,portions_per_day:+crmV('crm-e-portions')||null,assigned_to:crmV('crm-e-assigned')||null,callback_at:crmV('crm-e-cb')||null,note:crmV('crm-e-note')||null};
+  try{
+    if(typeof authEnsure==='function')await authEnsure();
+    let cid=id;
+    if(id){await crmMust(fetch(`${SUPA_URL}/rest/v1/crm_clients?id=eq.${id}`,{method:'PATCH',headers:crmH({Prefer:'return=minimal'}),body:JSON.stringify(body)}));}
+    else{const r=await crmMust(fetch(`${SUPA_URL}/rest/v1/crm_clients`,{method:'POST',headers:crmH({Prefer:'return=representation'}),body:JSON.stringify(body)}));const d=await r.json();cid=d&&d[0]&&d[0].id;}
+    if(typeof toast==='function')toast('✓ Сохранено',true);
+    await crmLoad();if(cid)crmOpen(cid);else crmClose();
+  }catch(e){alert('Не сохранилось: '+((e&&e.message)||e)+(/23505/.test(String(e))?' — клиент с таким телефоном уже есть':''))}
+}
+async function crmDeleteClient(id){
+  if(!confirm('Удалить клиента и всю его историю?'))return;
+  try{if(typeof authEnsure==='function')await authEnsure();await crmMust(fetch(`${SUPA_URL}/rest/v1/crm_clients?id=eq.${id}`,{method:'DELETE',headers:authH()}));}catch(e){alert('Не удалилось: '+((e&&e.message)||e));return}
+  crmClose();crmLoad();
+}
+/* CRM:JS:END */
 </script>
 </body>
 </html>
