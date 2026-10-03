@@ -686,6 +686,7 @@ tr.today td{background:rgba(240,165,0,.04)}
   cursor:pointer;color:#fff;line-height:1.2;padding:6px 8px}
 #calls .cc-ok{background:#16a34a}#calls .cc-cb{background:#2563eb}
 #calls .cc-na{background:#6b7280}#calls .cc-no{background:#dc2626}
+#calls .cc-deal{background:#7c3aed;grid-column:1/-1}
 #calls .cc-done{opacity:.5}
 #calls .cc-modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:flex-end;
   justify-content:center;z-index:99}
@@ -724,6 +725,7 @@ tr.today td{background:rgba(240,165,0,.04)}
       <button class="cc-f on" onclick="ccFilter('stat','todo',this)">К звонку</button>
       <button class="cc-f" onclick="ccFilter('stat','callback',this)">Перезвон</button>
       <button class="cc-f" onclick="ccFilter('stat','tasting',this)">Дегустации</button>
+      <button class="cc-f" onclick="ccFilter('stat','client',this)">Клиенты</button>
       <button class="cc-f" onclick="ccFilter('stat','all',this)">Все</button>
     </div>
     <div id="cc-list"></div>
@@ -2801,15 +2803,19 @@ function importDailyReports(e){
 
 
 
+
 /* CC:JS:START Call-центр обзвона. Источник правды — Supabase mkt_leads (не CSV). */
-let CC_LEADS=[], CC_TODAY=[], CC_PRIO='all', CC_STAT='todo', CC_CUR=null, CC_SAVING=false;
+let CC_LEADS=[], CC_TODAY=[], CC_SALES=[], CC_PRIO='all', CC_STAT='todo', CC_CUR=null;
 
 // Подписи — узбекская латиница, согласованы с sales. Не менять без её ответа.
 const CC_OUTCOMES=[
   {k:'tasting', ico:'✅', uz:'Degustatsiya kelishildi', ru:'Дегустация', cls:'cc-ok'},
   {k:'callback',ico:'🔁', uz:"Qayta qo'ng'iroq",       ru:'Перезвон',   cls:'cc-cb'},
   {k:'no_answer',ico:'📵',uz:'Olishmadi',               ru:'Недозвон',   cls:'cc-na'},
-  {k:'rejected',ico:'❌', uz:'Rad etdi',                ru:'Отказ',      cls:'cc-no'}
+  {k:'rejected',ico:'❌', uz:'Rad etdi',                ru:'Отказ',      cls:'cc-no'},
+  // 03.10.2026: факт продажи с суммой — без него KPI «дегустация → заказ» нечем считать
+  // (mkt_sales была пустой, у исхода не было кнопки). Запись уходит в mkt_sales.
+  {k:'deal',    ico:'💰', uz:'Buyurtma oldi',           ru:'Заказ',      cls:'cc-deal'}
 ];
 const CC_REASONS=[
   {k:'own_kitchen', uz:"O'z oshxonasi bor",       ru:'своя кухня'},
@@ -2845,6 +2851,9 @@ async function ccLoad(){
     const rc=await fetch(`${SUPA_URL}/rest/v1/mkt_calls?select=outcome&created_at=gte.${from}`,{headers:authH()});
     CC_TODAY=await rc.json();
     if(!Array.isArray(CC_TODAY))CC_TODAY=[];
+    const rs=await fetch(`${SUPA_URL}/rest/v1/mkt_sales?select=amount&created_at=gte.${from}`,{headers:authH()});
+    CC_SALES=await rs.json();
+    if(!Array.isArray(CC_SALES))CC_SALES=[];
   }catch(e){
     if(box)box.innerHTML='<div class="empty">Не удалось загрузить. Проверьте интернет и нажмите «Обновить».</div>';
     return;
@@ -2866,6 +2875,7 @@ function ccVisible(){
     if(CC_STAT==='todo')    return ['new','no_answer','dialog','bad_number'].includes(l.status||'new');
     if(CC_STAT==='callback')return (l.status||'')==='callback';
     if(CC_STAT==='tasting') return (l.status||'')==='tasting';
+    if(CC_STAT==='client')  return (l.status||'')==='client';
     return true;
   });
 }
@@ -2877,7 +2887,8 @@ function ccRender(){
   const kpi=document.getElementById('cc-kpi');
   if(kpi)kpi.innerHTML=[
     ['Звонков',CC_TODAY.length],['✅',c('tasting')],['🔁',c('callback')],
-    ['❌',c('rejected')],['📵',c('no_answer')]
+    ['❌',c('rejected')],['📵',c('no_answer')],
+    ['💰',c('deal')],['сум',CC_SALES.reduce((a,x)=>a+(+x.amount||0),0).toLocaleString('ru-RU')]
   ].map(([t,v])=>`<div>${t}<b>${v}</b></div>`).join('');
 
   const list=ccVisible(), box=document.getElementById('cc-list');
@@ -2927,7 +2938,19 @@ function ccPick(id,outcome){
        <button class="cc-opt" style="background:#2563eb;color:#fff;border:none;text-align:center"
          onclick="ccSave(null,document.getElementById('cc-date').value)">Saqlash / Сохранить</button>`);
   }
-  ccSave(null,null);
+  if(outcome==='deal'){
+    return ccSheet('Summa? / Сумма заказа, сум',
+      `<input class="cc-in" id="cc-amount" type="number" inputmode="numeric" min="1000" step="1000" placeholder="masalan 450000">
+       <input class="cc-in" id="cc-note" placeholder="Izoh / что заказали (ixtiyoriy)">
+       <button class="cc-opt" style="background:#7c3aed;color:#fff;border:none;text-align:center"
+         onclick="ccSaveDeal()">Saqlash / Сохранить</button>`);
+  }
+  ccSave(null,null,null);
+}
+function ccSaveDeal(){
+  const v=Math.round(+document.getElementById('cc-amount').value||0);
+  if(v<=0){alert('Summani kiriting / укажите сумму заказа');return}
+  ccSave(null,null,v);
 }
 
 function ccSheet(title,html){
@@ -2937,38 +2960,41 @@ function ccSheet(title,html){
 }
 function ccClose(){document.getElementById('cc-modal').classList.remove('on');CC_CUR=null}
 
-async function ccSave(reason,callbackAt){
-  if(!CC_CUR||CC_SAVING)return;   // защита от двойного клика (первый клик уже сохраняет)
-  CC_SAVING=true;
+async function ccSave(reason,callbackAt,amount){
+  if(!CC_CUR)return;
   const {id,outcome}=CC_CUR;
   const lead=CC_LEADS.find(l=>l.id===id)||{};
   const noteEl=document.getElementById('cc-note');
   const note=noteEl?noteEl.value:null;
-  // мгновенный отклик: гасим карточку и блокируем её кнопки, пока идёт сохранение
-  const _card=document.getElementById('cc-'+id);
-  if(_card){_card.style.opacity='.45';_card.style.pointerEvents='none';_card.querySelectorAll('.cc-b').forEach(b=>b.disabled=true);}
   ccClose();
   try{
     if(typeof authEnsure==='function')await authEnsure();
     const h=Object.assign({'Content-Type':'application/json'},authH());
+    // Не-2xx от PostgREST (RLS, схема, сеть) — ошибка, а не тихий пропуск: раньше fetch
+    // без проверки .ok «сохранял» звонок, которого в базе нет. Для KPI это недопустимо.
+    const must=async p=>{const r=await p;if(!r.ok)throw new Error('HTTP '+r.status+' '+(await r.text()).slice(0,160));return r};
+    const op=(AB_SESS&&AB_SESS.email)||null, now=new Date();
+    const today=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+    // 0. Продажа — первой: по ней считается KPI, её терять нельзя.
+    if(outcome==='deal')await must(fetch(`${SUPA_URL}/rest/v1/mkt_sales`,{method:'POST',headers:h,body:JSON.stringify({
+      lead_id:id,lead_name:lead.name||null,phone:lead.phone||null,amount:amount,date:today,
+      operator:op,source:'call',note:note||null})}));
     // 1. Факт звонка — в журнал. Он неизменяемый, по нему считается воронка.
-    await fetch(`${SUPA_URL}/rest/v1/mkt_calls`,{method:'POST',headers:h,body:JSON.stringify({
+    await must(fetch(`${SUPA_URL}/rest/v1/mkt_calls`,{method:'POST',headers:h,body:JSON.stringify({
       lead_id:id,lead_name:lead.name||null,outcome,reject_reason:reason||null,
-      callback_at:callbackAt||null,note:note||null,
-      operator:(AB_SESS&&AB_SESS.email)||null})});
+      callback_at:callbackAt||null,note:note||null,operator:op})}));
     // 2. Текущее состояние лида — в карточку.
-    const patch={status:outcome,outcome,reject_reason:reason||null,
-      calls_count:(lead.calls_count||0)+1,last_call_at:new Date().toISOString()};
+    const patch={status:outcome==='deal'?'client':outcome,outcome,reject_reason:reason||null,
+      calls_count:(lead.calls_count||0)+1,last_call_at:now.toISOString()};
     if(callbackAt){patch.next_step_date=callbackAt;patch.next_step='Qayta qoʻngʻiroq / перезвонить';}
     if(outcome==='tasting')patch.next_step='Degustatsiya / дегустация согласована';
-    await fetch(`${SUPA_URL}/rest/v1/mkt_leads?id=eq.${id}`,{method:'PATCH',headers:h,body:JSON.stringify(patch)});
+    if(outcome==='deal'){patch.orders_count=(lead.orders_count||0)+1;patch.total_spent=(+lead.total_spent||0)+amount;
+      patch.last_order_at=now.toISOString();patch.next_step='Takroriy buyurtma / повторный заказ';}
+    await must(fetch(`${SUPA_URL}/rest/v1/mkt_leads?id=eq.${id}`,{method:'PATCH',headers:h,body:JSON.stringify(patch)}));
   }catch(e){
-    CC_SAVING=false;
-    if(_card){_card.style.opacity='';_card.style.pointerEvents='';_card.querySelectorAll('.cc-b').forEach(b=>b.disabled=false);}
-    alert('Не сохранилось — проверьте интернет и повторите.');
+    alert('Не сохранилось: '+((e&&e.message)||e)+'\nПроверьте интернет и повторите.');
     return;
   }
-  CC_SAVING=false;
   ccLoad();
 }
 /* CC:JS:END */
