@@ -530,7 +530,7 @@ tr.today td{background:rgba(240,165,0,.04)}
       <div class="fsec-hdr"><div class="fdot"></div><div class="fn">Ежедневные расходы</div><div class="fs" id="dx-sum">0</div></div>
       <div class="fg">
         <div class="ff"><div class="fl">Такси</div><input type="number" class="fi" id="dx-taksi" placeholder="0" oninput="dxCalc()"></div>
-        <div class="ff"><div class="fl">Упаковка</div><input type="number" class="fi" id="dx-upakovka" placeholder="0" oninput="dxCalc()"></div>
+        <div class="ff"><div class="fl">Амортизация - ремонт - реинвест</div><input type="number" class="fi" id="dx-amort" placeholder="0" oninput="dxCalc()"></div>
         <div class="ff"><div class="fl">Директор (изъятия из кассы)</div><input type="number" class="fi" id="dx-director" placeholder="0" oninput="dxCalc()"></div>
         <div class="ff"><div class="fl">Бензин</div><input type="number" class="fi" id="dx-benzin" placeholder="0" oninput="dxCalc()"></div>
         <div class="ff"><div class="fl">Прочее</div><input type="number" class="fi" id="dx-prochee" placeholder="0" oninput="dxCalc()"></div>
@@ -1591,7 +1591,7 @@ async function refreshHR(){
   if(cal)cal.style.opacity='1';
   toast('✓ Данные обновлены',true);
 }
-const DX_MAP={'Такси':'dx-taksi','Упаковка':'dx-upakovka','Директор':'dx-director','Бензин':'dx-benzin','Прочее':'dx-prochee'};
+const DX_MAP={'Такси':'dx-taksi','Амортизация - ремонт - реинвест':'dx-amort','Директор':'dx-director','Бензин':'dx-benzin','Прочее':'dx-prochee'};
 const RESERVE_PCT=0.05;   // резерв на непредвиденное (ремонт оборудования и т.д.) = 5% от оборота
 function dxCalc(){const s=Object.values(DX_MAP).reduce((a,id)=>a+gv(id),0);const e=document.getElementById('dx-sum');if(e)e.textContent=fmt(s);}
 async function onFinDate(){
