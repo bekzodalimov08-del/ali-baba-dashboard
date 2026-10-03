@@ -568,9 +568,7 @@ tr.today td{background:rgba(240,165,0,.04)}
   <div class="wrap">
     <div class="tabs">
       <button class="tab on" onclick="mktTab('clients',this)">👥 Клиенты</button>
-      <button class="tab" onclick="mktTab('sales',this)">🍽 Продажи блюд</button>
-      <button class="tab" onclick="mktTab('leads',this)">📋 Лиды</button>
-      <button class="tab" onclick="mktTab('orders',this)">🛒 Из заказов</button>
+      <button class="tab" onclick="mktTab('orders',this)">🌐 Заказ напрямую через веб Ali Baba</button>
       <button class="tab" onclick="goCalls()">📞 Обзвон</button>
       <button class="tab" onclick="goJournal()">📒 Журнал продаж</button>
     </div>
@@ -589,47 +587,6 @@ tr.today td{background:rgba(240,165,0,.04)}
         <div class="kpi net"><div class="kpi-lbl">Порций в день</div><div class="kpi-val" id="mk-portions">0</div></div>
       </div>
       <div class="client-grid" id="client-grid"></div>
-      <!-- ═══ Из iiko (1:1) ═══ -->
-      <div style="margin-top:20px;padding:8px 14px;background:var(--card2);border:1px solid var(--bdr);border-radius:var(--rr);font-size:12px;color:var(--t2);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-        <span>📡 Данные ниже — напрямую из iiko · <span id="mkti-gen-m" style="color:var(--t3)">загрузка…</span></span>
-        <button onclick="refreshMkt()" style="padding:5px 12px;border:1px solid var(--bdr);background:var(--card);border-radius:8px;font-size:12px;font-weight:700;color:var(--t1);cursor:pointer">⟲ Обновить</button>
-      </div>
-      <div class="tcard" style="margin-top:12px">
-        <div class="tcard-top"><div class="tcard-title">🏆 Клиенты из iiko (по активности)</div></div>
-        <div class="tscroll"><table><thead><tr><th>#</th><th>Телефон</th><th>Адрес</th><th style="text-align:right">Заказов</th></tr></thead><tbody id="mkti-clients-m"></tbody></table></div>
-      </div>
-      <div class="tcard" style="margin-top:12px">
-        <div class="tcard-top"><div class="tcard-title">🍽 ABC-анализ блюд <span style="color:var(--t3);font-weight:400;font-size:11px">A — топ · C — балласт</span></div></div>
-        <div class="tscroll"><table><thead><tr><th>Блюдо</th><th>Класс</th><th style="text-align:right">Порций</th></tr></thead><tbody id="mkti-abc-m"></tbody></table></div>
-      </div>
-      <div class="ccard" style="margin-top:12px;margin-bottom:14px"><div class="ccard-title">Порции по дням (из iiko)</div><div id="mkti-portions-m" style="padding:10px 6px 4px"></div></div>
-    </div>
-    <!-- SALES -->
-    <div id="mkt-sales" style="display:none">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-        <div style="font-size:15px;font-weight:800">Проданные блюда <span id="sales-gen" style="color:var(--t3);font-weight:400;font-size:11px"></span></div>
-        <button onclick="refreshMkt()" style="padding:5px 12px;border:1px solid var(--bdr);background:var(--card);border-radius:8px;font-size:12px;font-weight:700;color:var(--t1);cursor:pointer">⟲ Обновить</button>
-      </div>
-      <div class="tcard"><div class="tcard-top"><div class="tcard-title">Блюда по порциям (из iiko)</div></div>
-        <div class="tscroll"><table><thead><tr><th>Блюдо</th><th>Класс</th><th style="text-align:right">Порций</th></tr></thead>
-          <tbody id="sales-tbody"></tbody></table></div></div>
-      <div class="ccard" style="margin-top:12px"><div class="ccard-title">ТОП блюд по порциям</div><div class="ccard-h"><canvas id="ch-dishes"></canvas></div></div>
-    </div>
-    <!-- LEADS -->
-    <div id="mkt-leads" style="display:none">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-        <div style="font-size:15px;font-weight:800">Лиды и воронка</div>
-        <button class="add-btn" onclick="openLeadModal()">+ Добавить лид</button>
-      </div>
-      <div class="kpi-row" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px">
-        <div class="kpi cnt"><div class="kpi-lbl">Новые</div><div class="kpi-val" id="ld-new">0</div></div>
-        <div class="kpi rev"><div class="kpi-lbl">В переговорах</div><div class="kpi-val" id="ld-neg">0</div></div>
-        <div class="kpi gross"><div class="kpi-lbl">Закрыты (клиент)</div><div class="kpi-val" id="ld-won">0</div></div>
-        <div class="kpi exp"><div class="kpi-lbl">Отказали</div><div class="kpi-val" id="ld-lost">0</div></div>
-      </div>
-      <div class="tcard"><div class="tcard-top"><div class="tcard-title">Все лиды</div></div>
-        <div class="tscroll"><table><thead><tr><th>Компания</th><th>Контакт</th><th>Телефон</th><th>Источник</th><th>Статус</th><th>Дата</th><th></th></tr></thead>
-          <tbody id="leads-tbody"></tbody></table></div></div>
     </div>
     <!-- ORDER CUSTOMERS — клиенты из заказов витрины (авто из mkt_leads) -->
     <div id="mkt-orders" style="display:none">
@@ -2582,8 +2539,8 @@ function renderMktIiko(){
   _setAll(['mkti-gen','mkti-gen-m'],gen,true);
   const view=mktView(d);const abcV=view.abc,portV=view.portions;
   const avgP=portV.length?Math.round(portV.reduce((s,x)=>s+x.portions,0)/portV.length):0;
-  _setAll(['dm-total','mk-total'],String(d.clients.length),true);
-  _setAll(['dm-portions','mk-portions'],String(avgP),true);
+  _setAll(['dm-total'],String(d.clients.length),true);
+  _setAll(['dm-portions'],String(avgP),true);
   const info=document.getElementById('mflt-info');
   if(info)info.textContent=view.filtered?`Фильтр: ${fmtDL(view.from)}–${fmtDL(view.to)} · блюд ${abcV.length} · порций ${portV.reduce((s,x)=>s+x.portions,0)}`:`Весь период · блюд ${abcV.length}`;
   // Директор — полные таблицы (с выручкой); Менеджер (-m) — без денежных колонок
