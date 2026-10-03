@@ -1448,7 +1448,7 @@ function saveRecon(date){
   if(av>0)dd.recon[date]=av;else delete dd.recon[date];dbSave(dd);
 }
 function goHR(){renderHR();show('hr');loadHR();}
-function goMkt(){renderClients();renderLeads();loadMktIiko();show('mkt')}
+function goMkt(){renderClients();loadMktIiko();show('mkt')}
 function goLogin(){const e=document.getElementById('au-email');if(e)e.value='director@alibaba.uz';const p=document.getElementById('au-pass');if(p){p.value='';setTimeout(()=>p.focus(),50)}const er=document.getElementById('lerr');if(er)er.style.display='none';show('login')}
 function goDir(){show('dir');dirRender()}
 
@@ -1643,7 +1643,8 @@ async function finSave(){
   if(!date){toast('Выберите дату',false);return}
   try{
     for(const cat in DX_MAP){
-      await fetch(XP_URL,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({date,category:cat,amount:gv(DX_MAP[cat])})});
+      // 03.10: к «Прочее» уходит комментарий «что именно куплено» → opex.comment (xp v24)
+      await fetch(XP_URL,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({date,category:cat,amount:gv(DX_MAP[cat]),...(cat==='Прочее'?{comment:((document.getElementById('dx-prochee-note')||{}).value||'').trim()}:{})})});
     }
     saveRecon(date); _iikoSynced=null;   // чтобы Директор пересчитал с новыми расходами
     toast('✓ Сохранено — расходы за '+date);
@@ -1931,11 +1932,7 @@ function mktTab(tab,btn){
   document.querySelectorAll('.tab').forEach(b=>{if(b.closest('#mkt'))b.classList.remove('on')});
   btn.classList.add('on');
   document.getElementById('mkt-clients').style.display=tab==='clients'?'':'none';
-  document.getElementById('mkt-sales').style.display=tab==='sales'?'':'none';
-  document.getElementById('mkt-leads').style.display=tab==='leads'?'':'none';
   document.getElementById('mkt-orders').style.display=tab==='orders'?'':'none';
-  if(tab==='sales')renderSales();
-  if(tab==='leads')renderLeads();
   if(tab==='orders')renderOrderLeads();
 }
 var _ocFilter='all';
