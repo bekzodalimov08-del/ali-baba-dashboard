@@ -3463,7 +3463,7 @@ async function renderIikoPL(force){
     const cogs=cogsProd+cogsDel+shortage-surplus;
     const exps=Object.entries(acc).filter(([n,v])=>v.t==='EXPENSES'||v.t==='OTHER_EXPENSES').map(([n,v])=>[n,v.i-v.o]).filter(x=>x[1]!==0).sort((a,b)=>b[1]-a[1]);
     const expTotal=exps.reduce((s,x)=>s+x[1],0), gross=revenue-cogs, profit=gross-expTotal;
-    const uz=pays.find(p=>/uzum/i.test(p.name)), uzNet=uz?+uz.net:0, uzComm=Math.round(uzNet*0.29);
+    const uz=pays.find(p=>/uzum/i.test(p.name)), uzNet=uz?+uz.net:0, commPosted=exps.some(x=>/комисси/i.test(x[0])&&x[1]>0), uzComm=commPosted?0:Math.round(uzNet*0.29);   // 05.10: комиссия проведена в iiko — не вычитаем второй раз
     const hrSum=(Array.isArray(hr)?hr:[]).reduce((s,x)=>s+(+x.amount||0),0), zp=exps.find(x=>/зарплат/i.test(x[0]));
     const del=rows.filter(r=>r.kind==='deleted'&&/DELETED_/.test(r.name)), delSum=del.reduce((s,r)=>s+(+r.gross||0),0), delCnt=del.reduce((s,r)=>s+(+r.orders||0),0);
     const acq=A('Денежные средства, эквайринг','i'), cashOut=A('Главная касса','o'), payIn=A('Задолженность перед поставщиками','i'), payOut=A('Задолженность перед поставщиками','o');
@@ -3481,9 +3481,9 @@ async function renderIikoPL(force){
       ${line('= Валовая прибыль · '+pct(gross),gross,'sum')}
       ${exps.map(([n,v])=>line('− '+dkiEsc(n),-v)).join('')}
       ${line('= Прибыль по iiko · '+pct(profit),profit,'total '+(profit<0?'bad':'good'))}
-      <div class="dki-h2">Чего в iiko пока нет</div>
+      ${uzComm?`<div class="dki-h2">Чего в iiko пока нет</div>
       ${line('− Комиссия Uzum 29 % от '+F(uzNet)+' (в iiko не проведена)',-uzComm,'bad')}
-      ${line('= Прибыль с учётом комиссии Uzum · '+pct(profit-uzComm),profit-uzComm,'total '+((profit-uzComm)<0?'bad':'good'))}
+      ${line('= Прибыль с учётом комиссии Uzum · '+pct(profit-uzComm),profit-uzComm,'total '+((profit-uzComm)<0?'bad':'good'))}`:''}
       ${zp?`<div class="dki-note">ЗП в iiko ${F(zp[1])} — внесена пакетом как оценка; по HR-табелю начислено ${F(hrSum)}${(hrSum&&Math.abs(hrSum-zp[1])>zp[1]*0.05)?' ⚠️ расходятся — нужна ведомость всех сотрудников':''}</div>`:''}
       <div class="dki-h2">Контроль</div>
       ${line('Удалённые заказы: '+delCnt+' шт.'+(delBad?' ⚠️ больше 2 % выручки':''),delSum,delBad?'bad':'')}
