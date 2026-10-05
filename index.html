@@ -118,6 +118,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;background:
 
 /* ─── KPI ─── */
 .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.kpi-row.k5{grid-template-columns:repeat(5,1fr)}
 .kpi{background:var(--card);border:1px solid var(--bdr);border-radius:var(--rr);padding:20px;position:relative;overflow:hidden}
 .kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
 .kpi.rev::before{background:linear-gradient(90deg,var(--blue),#818cf8)}
@@ -344,7 +345,7 @@ tr.today td{background:rgba(240,165,0,.04)}
 .empty{text-align:center;padding:48px;color:var(--t3);font-size:13px}
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-thumb{background:var(--t3);border-radius:3px}
-@media(max-width:1100px){.kpi-row{grid-template-columns:repeat(2,1fr)}.charts-row{grid-template-columns:1fr}.roles{grid-template-columns:repeat(2,220px)}}
+@media(max-width:1100px){.kpi-row,.kpi-row.k5{grid-template-columns:repeat(2,1fr)}.charts-row{grid-template-columns:1fr}.roles{grid-template-columns:repeat(2,220px)}}
 .brand-mark{display:inline-block;width:20px;height:20px;vertical-align:-4px;margin-right:7px;background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Crect%20width%3D%27100%27%20height%3D%27100%27%20rx%3D%2722%27%20fill%3D%27%23F6B500%27%2F%3E%3Ccircle%20cx%3D%2750%27%20cy%3D%2754%27%20r%3D%2733%27%20fill%3D%27none%27%20stroke%3D%27%23161616%27%20stroke-width%3D%276%27%2F%3E%3Crect%20x%3D%2742%27%20y%3D%2718%27%20width%3D%2716%27%20height%3D%2712%27%20rx%3D%272%27%20fill%3D%27%23D8392B%27%2F%3E%3Crect%20x%3D%2740%27%20y%3D%2730%27%20width%3D%2720%27%20height%3D%274%27%20rx%3D%271%27%20fill%3D%27%23161616%27%2F%3E%3C%2Fsvg%3E") center/contain no-repeat}
 /* ═══ Переключатель Менеджер / Директор ═══ */
 .mode-toggle{display:inline-flex;gap:4px;background:var(--card2);border:1px solid var(--bdr);border-radius:12px;padding:4px;margin:0 auto 26px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
@@ -885,11 +886,12 @@ tr.today td{background:rgba(240,165,0,.04)}
         <button class="df-btn df-ghost" onclick="weekFilter()">Неделя</button>
         <button class="df-btn df-ghost" onclick="clearDateFilter()">Весь месяц</button>
       </div>
-      <div class="kpi-row">
+      <div class="kpi-row k5">
         <div class="kpi rev"><div class="kpi-lbl">Оборот</div><div class="kpi-val" id="dk-rev">—</div><div class="kpi-sub">Нал + Перечисл + Карта (iiko)</div></div>
         <div class="kpi exp"><div class="kpi-lbl">Все расходы</div><div class="kpi-val" id="dk-exp">—</div><div class="kpi-sub">COGS + OpEx</div></div>
         <div class="kpi gross"><div class="kpi-lbl">Грязная прибыль</div><div class="kpi-val" id="dk-gross">—</div><div class="kpi-sub">Оборот − COGS <span class="kpi-badge" id="dk-gp"></span></div></div>
-        <div class="kpi net"><div class="kpi-lbl">Чистая прибыль (EBITDA)</div><div class="kpi-val" id="dk-net">—</div><div class="kpi-sub">После всех расходов <span class="kpi-badge" id="dk-np"></span></div></div>
+        <div class="kpi net"><div class="kpi-lbl">EBITDA</div><div class="kpi-val" id="dk-ebitda">—</div><div class="kpi-sub">До налогов (амортизации нет) <span class="kpi-badge" id="dk-ep"></span></div></div>
+        <div class="kpi net"><div class="kpi-lbl">Чистая прибыль</div><div class="kpi-val" id="dk-net">—</div><div class="kpi-sub">После всех расходов и налогов <span class="kpi-badge" id="dk-np"></span></div></div>
       </div>
       <div class="kpi-row" style="grid-template-columns:repeat(3,1fr);margin-top:12px">
         <div class="kpi"><div class="kpi-lbl">Food cost % (COGS/оборот net)</div><div class="kpi-val" id="dk-food">—</div><div class="kpi-sub" id="dk-food-sub">на gross ~44% · net завышен из-за Uzum</div></div>
@@ -898,7 +900,7 @@ tr.today td{background:rgba(240,165,0,.04)}
       </div>
       <div class="kpi-row" style="grid-template-columns:repeat(3,1fr);margin-top:12px">
         <div class="kpi"><div class="kpi-lbl">ЗП (ФОТ), сумма за период</div><div class="kpi-val" id="dk-zp-sum">—</div><div class="kpi-sub">из HR-графика + расходов iiko</div></div>
-        <div class="kpi"><div class="kpi-lbl">OpEx всего за период</div><div class="kpi-val" id="dk-opex-sum">—</div><div class="kpi-sub">фикс + iiko-расходы + резерв 5%</div></div>
+        <div class="kpi"><div class="kpi-lbl">OpEx всего за период</div><div class="kpi-val" id="dk-opex-sum">—</div><div class="kpi-sub">фикс + расходы iiko</div></div>
         <div class="kpi"><div class="kpi-lbl">Food cost, сумма</div><div class="kpi-val" id="dk-food-sum">—</div><div class="kpi-sub">себестоимость (COGS)</div></div>
       </div>
       <details class="fold"><summary>🔍 Разбивки — оплаты · расходы · сверка · сравнение</summary><div class="fold-body">
@@ -1674,7 +1676,7 @@ async function refreshHR(){
   toast('✓ Данные обновлены',true);
 }
 const DX_MAP={'Такси':'dx-taksi','Амортизация - ремонт - реинвест':'dx-amort','Директор':'dx-director','Бензин':'dx-benzin','Прочее':'dx-prochee'};
-const RESERVE_PCT=0.05;   // резерв на непредвиденное (ремонт оборудования и т.д.) = 5% от оборота
+const RESERVE_PCT=0;   // резерв 5% убран (CEO 05.10: прибыль только по факту iiko, без условных вычетов)
 function dxCalc(){const s=Object.values(DX_MAP).reduce((a,id)=>a+gv(id),0);const e=document.getElementById('dx-sum');if(e)e.textContent=fmt(s);}
 function dxNoteSave(){
   const date=(document.getElementById('f-date')||{}).value;if(!date)return;
@@ -2327,6 +2329,11 @@ function renderDirFinance(){
   document.getElementById('dk-exp').textContent=fmt(tE);
   document.getElementById('dk-gross').textContent=fmt(tG);
   document.getElementById('dk-net').textContent=fmt(tN);
+  // EBITDA = чистая прибыль + налоги (статьи iiko с «налог/НДС/НДФЛ/ИНПС»); амортизации в учёте нет
+  const taxSum=Object.entries(iikoExp.byCat).reduce((s,kv)=>s+(/налог|ндс|ндфл|инпс|соцнал/i.test(kv[0])?kv[1]:0),0);
+  const tEb=tN+taxSum;
+  document.getElementById('dk-ebitda').textContent=fmt(tEb);
+  document.getElementById('dk-ep').textContent=(tR>0?(tEb/tR*100).toFixed(1):0)+'%';
   document.getElementById('dk-gp').textContent=gp+'%';
   document.getElementById('dk-np').textContent=np+'%';
   // Food cost % (COGS/оборот), Labor cost % (ФОТ=ойлик+директор / оборот), маржа
